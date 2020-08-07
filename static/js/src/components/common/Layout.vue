@@ -37,7 +37,7 @@ export default {
         width: 100%;
     }
     .index-footer {
-        position: absolute;
+        position: relative;
         bottom: 0;
         left: 0;
         width: 100%;
