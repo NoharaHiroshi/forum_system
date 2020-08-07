@@ -28,11 +28,21 @@ export default {
         margin: 0;
         box-sizing: border-box;
     }
+    ul, li {
+        padding:0;
+        margin:0;
+        list-style: none
+    }
     .common-main {
         width: 100%;
     }
     .index-footer {
+        position: absolute;
+        bottom: 0;
+        left: 0;
         width: 100%;
+        padding: 0;
+        height: 120px;
     }
     .card {
         border: 0 solid #eee;
