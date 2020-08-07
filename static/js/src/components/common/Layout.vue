@@ -47,7 +47,10 @@ export default {
     .card {
         border: 0 solid #eee;
         border-radius: 0;
-        -webkit-box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
-        box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        -webkit-box-shadow: 0 2px 4px 0 rgba(0,0,0,.12), 0 0 6px 0 rgba(0,0,0,.04);
+        box-shadow: 0 2px 4px 0 rgba(0,0,0,.12), 0 0 6px 0 rgba(0,0,0,.04)
+    }
+    .margin-bottom20 {
+        margin-bottom: 20px;
     }
 </style>

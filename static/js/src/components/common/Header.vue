@@ -50,9 +50,6 @@
         line-height: 60px;
         background: #fff;
     }
-    .margin-bottom20 {
-        margin-bottom: 20px;
-    }
     .header .logo {
         text-align: center;
         font-size: 20px;
