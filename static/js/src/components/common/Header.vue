@@ -8,7 +8,7 @@
                 </div>
             </el-col>
             <el-col :span="16" >
-                <el-menu :default-active="activeIndex" class="menu" mode="horizontal">
+                <el-menu  class="menu" mode="horizontal">
                     <el-menu-item index="1">首页</el-menu-item>
                     <el-menu-item index="2">资源中心</el-menu-item>
                     <el-menu-item index="3">积分充值</el-menu-item>
