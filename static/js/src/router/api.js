@@ -1,9 +1,13 @@
-var root = '/';
+var root = '/api';
 
 export default{
   user: {
     checkUserName:{
       router:root+'/user/checkUserNameValid',
+      checklogin: false
+    },
+    checkUserEmail:{
+      router:root+'/user/checkUserEmailValid',
       checklogin: false
     },
     login: {

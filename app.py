@@ -1,9 +1,11 @@
 from flask import Flask
 
 from views.website import website
+from views.user import user
 
 BLUEPRINTS = [
-    (website, '')
+    (website, ''),
+    (user, '/user'),
 ]
 
 

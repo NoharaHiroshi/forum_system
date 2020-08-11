@@ -38,12 +38,22 @@
                 if(!v.$util.checkCommonCharValid(value)){
                     callback(new Error('包含非法字符，请检查'));
                 }
-                let data = {userId:value};
+                let data = {name: value};
                 v.$util.postAjax(v, v.$api.user.checkUserName, data, function (result) {
-                    if (result.code === '0') {
+                    if (result.response === 'success') {
                         callback();
                     } else {
                         callback(new Error('用户名已占用，请更换。'));
+                    }
+                });
+            };
+            let validateUserEmail = (rule, value, callback) => {
+                let data = {email: value};
+                v.$util.postAjax(v, v.$api.user.checkUserEmail, data, function (result) {
+                    if (result.response === 'success') {
+                        callback();
+                    } else {
+                        callback(new Error('用户邮箱已占用，请更换。'));
                     }
                 });
             };
@@ -55,7 +65,7 @@
                     callback(new Error('包含非法字符，请检查'));
                 }
                 if (this.registerForm.verify !== '') {
-                    this.$refs.form.validateField('verify');
+                    this.$refs.registerForm.validateField('verify');
                 }
                 callback();
                 }
@@ -63,7 +73,7 @@
             let validatePass2 = (rule, value, callback) => {
                 if (value === '') {
                     callback(new Error('请再次输入密码'));
-                } else if (value !== this.form.password) {
+                } else if (value !== this.registerForm.password) {
                     callback(new Error('两次输入密码不一致!'));
                 } else {
                     callback();
@@ -88,7 +98,7 @@
                 rulesForm:{
                     name:[
                       { required: true, message: '请输入昵称', trigger: 'blur' },
-                      { min: 6, max: 20, message: '长度在 3 到 15 个字符', trigger: 'blur' },
+                      { min: 3, max: 15, message: '长度在 3 到 15 个字符', trigger: 'blur' },
                       { validator: validateUsername, trigger: 'blur' }
                     ],
                     password: [
@@ -102,7 +112,8 @@
                     ],
                     email:[
                       { required: true, message: '请输入邮箱地址', trigger: 'blur' },
-                      { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
+                      { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] },
+                      { validator: validateUserEmail, trigger: 'blur' }
                     ],
                     agreement: [
                       { validator: checkAgreement, trigger: 'change' }
@@ -124,12 +135,12 @@
                             this.$refs.registerForm.validateField('agreement');
                             return;
                         }
-                        let data = v.form;
-                        v.$util.postAjax(v, v.$api.user.register, data, function (result) {
-                            if (result.code === "0") {
+                        v.$util.postAjax(v, v.$api.user.register, form, function (result) {
+                            if (result.response === "success") {
                                 let user = {
-                                    userId: v.form.userId,
-                                    password: v.form.password,
+                                    name: v.registerForm.name,
+                                    password: v.registerForm.password,
+                                    email: v.registerForm.email
                                 };
                                 v.$notify({
                                     title: '注册成功',
@@ -190,5 +201,8 @@
     }
     .el-form-item__error {
         padding-top: 5px;
+    }
+    .el-form-item--feedback .el-input__validateIcon {
+        color: #86FF40;
     }
 </style>
