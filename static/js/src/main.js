@@ -10,6 +10,8 @@ import { fas } from '@fortawesome/free-solid-svg-icons'
 import { far } from '@fortawesome/free-regular-svg-icons'
 import { fab } from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import util from './util/util'
+import api from './router/api'
 
 
 Vue.config.productionTip = false;
@@ -19,9 +21,12 @@ Vue.component('font-awesome-icon', FontAwesomeIcon);
 Vue.use(ElementUI);
 Vue.use(VueAxios, axios);
 
+Vue.prototype.$util = util;
+Vue.prototype.$api = api;
+
 new Vue({
   el: '#app',
   router,
   components: { App },
   template: '<App/>'
-})
+});

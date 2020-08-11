@@ -3,23 +3,23 @@
         <div class="register-title">注册</div>
         <div class="register-context">
             <el-form ref="registerForm" :model="registerForm" status-icon :rules="rulesForm" label-width="95px" size="small">
-                <el-form-item label="昵称" prop="name">
+                <el-form-item label="昵称" prop="name" class="form-item">
                     <el-input v-model="registerForm.name" maxlength="15" placeholder="请输入昵称" size="small" show-word-limit></el-input>
                 </el-form-item>
-                <el-form-item label="邮箱" prop="email">
+                <el-form-item label="邮箱" prop="email" class="form-item">
                     <el-input v-model="registerForm.email" placeholder="请输入邮箱" size="small"></el-input>
                 </el-form-item>
-                <el-form-item label="密码" prop="password">
+                <el-form-item label="密码" prop="password" class="form-item">
                     <el-input v-model="registerForm.password" placeholder="请输入密码" size="small" show-password></el-input>
                 </el-form-item>
-                <el-form-item label="确认密码" prop="verify">
+                <el-form-item label="确认密码" prop="verify" class="form-item">
                     <el-input v-model="registerForm.verify" placeholder="请确认密码" size="small"  show-password></el-input>
                 </el-form-item>
-                 <el-form-item prop="agreement" class="link-tab">
-                    <el-checkbox v-model="form.agreement" @change="agreementChange()"></el-checkbox>
+                 <el-form-item prop="agreement" class="link-tab form-item">
+                    <el-checkbox v-model="registerForm.agreement" @change="agreementChange()"></el-checkbox>
                     同意<a target="_blank" href="#">网站服务条款</a>
                   </el-form-item>
-                <el-form-item>
+                <el-form-item class="form-item">
                     <div class="form-btn-grp">
                       <el-button type="primary" @click="register('registerForm')">注册</el-button>
                     </div>
@@ -35,11 +35,11 @@
         data() {
             let v = this;
             let validateUsername = (rule, value, callback) => {
-                if(!v.$util.CheckCommonCharValid(value)){
+                if(!v.$util.checkCommonCharValid(value)){
                     callback(new Error('包含非法字符，请检查'));
                 }
                 let data = {userId:value};
-                v.$util.postAjax(v, v.$api.public.checkusername, data, function (result) {
+                v.$util.postAjax(v, v.$api.user.checkUserName, data, function (result) {
                     if (result.code === '0') {
                         callback();
                     } else {
@@ -51,11 +51,11 @@
                 if (value === '') {
                     callback(new Error('请输入密码'));
                 } else {
-                if(!v.$util.CheckCommonPasswordValid(value)){
+                if(!v.$util.checkCommonPasswordValid(value)){
                     callback(new Error('包含非法字符，请检查'));
                 }
-                if (this.form.repassword !== '') {
-                    this.$refs.form.validateField('repassword');
+                if (this.registerForm.verify !== '') {
+                    this.$refs.form.validateField('verify');
                 }
                 callback();
                 }
@@ -101,9 +101,9 @@
                       { validator: validatePass2, trigger: 'blur' }
                     ],
                     email:[
-                              { required: true, message: '请输入邮箱地址', trigger: 'blur' },
-                              { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
-                            ],
+                      { required: true, message: '请输入邮箱地址', trigger: 'blur' },
+                      { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
+                    ],
                     agreement: [
                       { validator: checkAgreement, trigger: 'change' }
                     ]
@@ -111,9 +111,54 @@
             }
         },
         methods: {
-            register() {
-
-            }
+            register(formName) {
+                let form = {
+                    name: this.registerForm.name,
+                    password: this.registerForm.password,
+                    email: this.registerForm.email
+                };
+                let v = this;
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+                        if(!v.registerForm.agreement){
+                            this.$refs.registerForm.validateField('agreement');
+                            return;
+                        }
+                        let data = v.form;
+                        v.$util.postAjax(v, v.$api.user.register, data, function (result) {
+                            if (result.code === "0") {
+                                let user = {
+                                    userId: v.form.userId,
+                                    password: v.form.password,
+                                };
+                                v.$notify({
+                                    title: '注册成功',
+                                    message: '恭喜您注册成功。',
+                                    type: 'success'
+                                });
+                            } else {
+                                v.$message.error(result.msg);
+                            }
+                        });
+                    } else {
+                        return false;
+                    }
+                });
+            },
+            agreementChange(){
+                let v = this;
+                if(this.registerForm.agreement){
+                    this.$confirm('选中代表您已阅读并同意《网站服务条款》', '提示', {
+                    confirmButtonText: '已阅读并同意',
+                    cancelButtonText: '不同意',
+                    type: 'warning'
+                }).then(() => {
+                    v.registerForm.agreement = true;
+                }).catch(() => {
+                    v.registerForm.agreement = false;
+                });
+              }
+            },
         }
     }
 </script>
@@ -139,5 +184,11 @@
         box-sizing: border-box;
         margin: 0 auto;
         width: 40%;
+    }
+    .form-item {
+        margin-bottom: 25px !important;
+    }
+    .el-form-item__error {
+        padding-top: 5px;
     }
 </style>
