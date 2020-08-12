@@ -118,7 +118,7 @@
                     agreement: [
                       { validator: checkAgreement, trigger: 'change' }
                     ]
-                  }
+                }
             }
         },
         methods: {
@@ -137,16 +137,12 @@
                         }
                         v.$util.postAjax(v, v.$api.user.register, form, function (result) {
                             if (result.response === "success") {
-                                let user = {
-                                    name: v.registerForm.name,
-                                    password: v.registerForm.password,
-                                    email: v.registerForm.email
-                                };
                                 v.$notify({
                                     title: '注册成功',
                                     message: '恭喜您注册成功。',
                                     type: 'success'
                                 });
+                                v.$router.push({name: 'login'});
                             } else {
                                 v.$message.error(result.msg);
                             }

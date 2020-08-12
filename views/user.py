@@ -6,6 +6,7 @@ from sqlalchemy import or_
 from model.user.user import User
 from flask import Blueprint, request, jsonify, abort
 from libs.aes_chiper import AESCipher
+from libs.gen_captcha import Captcha
 
 user = Blueprint('user', __name__, static_folder='templates')
 
@@ -95,3 +96,19 @@ def register():
         print(traceback.format_exc(e))
         abort(500)
 
+
+@user.route('/getCaptcha', methods=['POST'])
+def get_captcha():
+    try:
+        result = {
+            'response': 'success',
+            'data': '',
+            'info': ''
+        }
+        tokenId = request.json.get("tokenId", None)
+        img, s = Captcha.get_captcha()
+        result["data"] = "data:image/jpg;base64," + img
+        return jsonify(result)
+    except Exception as e:
+        print(traceback.format_exc(e))
+        abort(500)

@@ -4,6 +4,7 @@ import App from '@/App'
 import Layout from '@/components/common/Layout'
 import Index from '@/components/Index'
 import Register from '@/components/common/Register'
+import Login from '@/components/common/Login'
 
 Vue.use(Router);
 
@@ -25,6 +26,10 @@ const router = new Router({
               path: "register",
               name: "register",
               component: Register
+            }, {
+              path: "login",
+              name: "login",
+              component: Login
             }
           ]
         }

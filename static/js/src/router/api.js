@@ -21,6 +21,10 @@ export default{
     register: {
       router: root + '/user/register',
       checklogin: false
+    },
+    getCaptcha: {
+      router: root + '/user/getCaptcha',
+      checklogin: false
     }
   }
 }
