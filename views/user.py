@@ -7,8 +7,13 @@ from model.user.user import User
 from flask import Blueprint, request, jsonify, abort
 from libs.aes_chiper import AESCipher
 from libs.gen_captcha import Captcha
+from redis_store import redis_db
 
 user = Blueprint('user', __name__, static_folder='templates')
+
+
+def get_token_id_key(token_id):
+    return "tokenId_%s" % token_id
 
 
 @user.route('/checkUserNameValid', methods=['POST'])
@@ -105,9 +110,10 @@ def get_captcha():
             'data': '',
             'info': ''
         }
-        tokenId = request.json.get("tokenId", None)
+        token_id = request.json.get("tokenId", None)
         img, s = Captcha.get_captcha()
         result["data"] = "data:image/jpg;base64," + img
+        redis_db.set(get_token_id_key(token_id), s, 60)
         return jsonify(result)
     except Exception as e:
         print(traceback.format_exc(e))
