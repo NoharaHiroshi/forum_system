@@ -40,4 +40,5 @@ def init_system_config(name, email, password):
 
 if __name__ == "__main__":
     # create_tables()
-    init_system_config("Lands", "380788433@qq.com", "LanziDuola_LJK")
+    # init_system_config("Lands", "380788433@qq.com", "LanziDuola_LJK")
+    print(AESCipher.encrypt("12345678"))

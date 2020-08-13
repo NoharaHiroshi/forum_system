@@ -56,6 +56,7 @@
         methods: {
             login(formName) {
                 let form = {
+                    tokenId: this.tokenId,
                     email: this.loginForm.email,
                     password: this.loginForm.password,
                     captcha: this.loginForm.captcha
@@ -71,7 +72,8 @@
                                     type: 'success'
                                 });
                             } else {
-                                v.$message.error(result.msg);
+                                v.$message.error(result.info);
+                                v.getCaptcha();
                             }
                         });
                     } else {
@@ -88,13 +90,13 @@
                 }
                 v.tokenId = random_str;
                 let data = {
-                  "token": v.tokenId
+                  "tokenId": v.tokenId
                 };
                 v.$util.postAjax(v, v.$api.user.getCaptcha, data, function (result) {
                     if (result.response === "success") {
                         v.captchaImg = result.data;
                     } else {
-                        v.$message.error(result.msg);
+                        v.$message.error(result.info);
                     }
                 });
             }

@@ -8,9 +8,9 @@ REDIS_CACHE_DB = 0
 
 REDIS_CACHES={
     'default': {
-        'HOST' : REDIS_HOST,
-        'PORT' : REDIS_PORT,
-        'DB' : REDIS_CACHE_DB,
+        'HOST': REDIS_HOST,
+        'PORT': REDIS_PORT,
+        'DB': REDIS_CACHE_DB,
         'TIMEOUT': 3600 * 24 * 7,
     },
 }

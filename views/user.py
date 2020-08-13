@@ -31,7 +31,7 @@ def check_user_name_valid():
             if user:
                 result.update({
                     "response": "fail",
-                    "info": "current user name has already exist"
+                    "info": "当前用户名已存在"
                 })
         return jsonify(result)
     except Exception as e:
@@ -54,7 +54,7 @@ def check_user_email_valid():
             if user:
                 result.update({
                     "response": "fail",
-                    "info": "current user email has already exist"
+                    "info": "当前用户邮箱已存在"
                 })
         return jsonify(result)
     except Exception as e:
@@ -75,26 +75,26 @@ def register():
         if None in [name, password, email]:
             result.update({
                 "response": "fail",
-                "info": "params not enough"
+                "info": "请求参数错误"
             })
             return jsonify(result)
         en_password = AESCipher.encrypt(password),
         with get_session() as db_session:
-            user = db_session.query(User).filter(
+            u = db_session.query(User).filter(
                 or_(User.name == name, User.email == email)
             ).first()
-            if user:
+            if u:
                 result.update({
                     "response": "fail",
-                    "info": "current user name has already exist"
+                    "info": "当前用户已存在"
                 })
                 return jsonify(result)
             else:
-                user = User()
-                user.name = name
-                user.password = en_password
-                user.email = email
-                db_session.add(user)
+                u = User()
+                u.name = name
+                u.password = en_password
+                u.email = email
+                db_session.add(u)
                 db_session.commit()
                 return jsonify(result)
     except Exception as e:
@@ -113,8 +113,57 @@ def get_captcha():
         token_id = request.json.get("tokenId", None)
         img, s = Captcha.get_captcha()
         result["data"] = "data:image/jpg;base64," + img
-        redis_db.set(get_token_id_key(token_id), s, 60)
+        redis_db.set(get_token_id_key(token_id), s, 300)
         return jsonify(result)
+    except Exception as e:
+        print(traceback.format_exc(e))
+        abort(500)
+
+
+@user.route('/login', methods=['POST'])
+def login():
+    try:
+        result = {
+            'response': 'success',
+            'info': ''
+        }
+        token_id = request.json.get("tokenId", None)
+        password = request.json.get("password", None)
+        email = request.json.get("email", None)
+        captcha = request.json.get("captcha", None)
+        if None in [password, email, captcha]:
+            result.update({
+                "response": "fail",
+                "info": "请求参数错误"
+            })
+            return jsonify(result)
+        store_captcha = str(redis_db.get(get_token_id_key(token_id)), "utf-8")
+        if store_captcha != captcha.upper():
+            result.update({
+                "response": "fail",
+                "info": "验证码输入错误"
+            })
+            return jsonify(result)
+        with get_session() as db_session:
+            u = db_session.query(User).filter(
+                User.email == email
+            ).first()
+            if u:
+                de_password = AESCipher.decrypt(u.password)
+                if de_password != password:
+                    result.update({
+                        "response": "fail",
+                        "info": "密码输入错误"
+                    })
+                    return jsonify(result)
+                else:
+                    return jsonify(result)
+            else:
+                result.update({
+                    "response": "fail",
+                    "info": "当前用户不存在"
+                })
+                return jsonify(result)
     except Exception as e:
         print(traceback.format_exc(e))
         abort(500)
