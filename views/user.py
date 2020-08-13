@@ -5,6 +5,7 @@ from model.config.session import get_session
 from sqlalchemy import or_
 from model.user.user import User
 from flask import Blueprint, request, jsonify, abort
+from flask_login import current_user, login_user, logout_user
 from libs.aes_chiper import AESCipher
 from libs.gen_captcha import Captcha
 from redis_store import redis_db
@@ -25,10 +26,10 @@ def check_user_name_valid():
         }
         name = request.json.get("name", None)
         with get_session() as db_session:
-            user = db_session.query(User).filter(
+            u = db_session.query(User).filter(
                 User.name == name
             ).first()
-            if user:
+            if u:
                 result.update({
                     "response": "fail",
                     "info": "当前用户名已存在"
@@ -48,10 +49,10 @@ def check_user_email_valid():
         }
         email = request.json.get("email", None)
         with get_session() as db_session:
-            user = db_session.query(User).filter(
+            u = db_session.query(User).filter(
                 User.email == email
             ).first()
-            if user:
+            if u:
                 result.update({
                     "response": "fail",
                     "info": "当前用户邮箱已存在"
@@ -125,6 +126,7 @@ def login():
     try:
         result = {
             'response': 'success',
+            "data": "",
             'info': ''
         }
         token_id = request.json.get("tokenId", None)
@@ -157,6 +159,8 @@ def login():
                     })
                     return jsonify(result)
                 else:
+                    login_user(u)
+                    result["data"] = u.to_dict()
                     return jsonify(result)
             else:
                 result.update({

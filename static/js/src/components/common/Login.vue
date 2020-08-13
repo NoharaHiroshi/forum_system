@@ -34,8 +34,8 @@
                 tokenId: "",
                 captchaImg: "",
                 loginForm: {
-                    email: "",
-                    password: "",
+                    email: "380788433@qq.com",
+                    password: "12345678",
                     captcha: ""
                 },
                 rulesForm:{

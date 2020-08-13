@@ -15,3 +15,15 @@ class User(Base):
     email = Column(String(100), index=True, nullable=False)
     status = Column(Integer, default=NOT_ACTIVE, index=True)
 
+    def is_active(self):
+        return self.status == User.NORMAL
+
+    def to_dict(self):
+        return {
+            'id': str(self.id),
+            'email': self.email,
+            'name': self.name,
+            'status': self.status,
+            'is_active': self.is_active()
+        }
+
