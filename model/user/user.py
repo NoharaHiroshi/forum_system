@@ -18,6 +18,9 @@ class User(Base):
     def is_active(self):
         return self.status == User.NORMAL
 
+    def get_id(self):
+        return self.id
+
     def to_dict(self):
         return {
             'id': str(self.id),

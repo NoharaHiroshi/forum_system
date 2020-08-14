@@ -139,8 +139,15 @@ def login():
                 "info": "请求参数错误"
             })
             return jsonify(result)
-        store_captcha = str(redis_db.get(get_token_id_key(token_id)), "utf-8")
-        if store_captcha != captcha.upper():
+        store_captcha = redis_db.get(get_token_id_key(token_id))
+        if not store_captcha:
+            result.update({
+                "response": "fail",
+                "info": "验证码超时，请重新获取验证码"
+            })
+            return jsonify(result)
+        en_store_captcha = str(store_captcha, "utf-8")
+        if en_store_captcha != captcha.upper():
             result.update({
                 "response": "fail",
                 "info": "验证码输入错误"
@@ -159,7 +166,7 @@ def login():
                     })
                     return jsonify(result)
                 else:
-                    login_user(u)
+                    login_user(u, remember=True)
                     result["data"] = u.to_dict()
                     return jsonify(result)
             else:

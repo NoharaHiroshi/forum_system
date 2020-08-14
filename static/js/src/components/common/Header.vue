@@ -7,29 +7,31 @@
                     Forum System
                 </div>
             </el-col>
-            <el-col :span="16" >
+            <el-col :span="17" >
                 <el-menu  class="menu" mode="horizontal">
                     <el-menu-item index="1">首页</el-menu-item>
                     <el-menu-item index="2">资源中心</el-menu-item>
                     <el-menu-item index="3">积分充值</el-menu-item>
                 </el-menu>
             </el-col>
-            <el-col :span="3">
-                <span class="user">
+            <el-col :span="3" class="user">
+                <span v-if="isLogin">
                     <el-avatar class="avatar" icon="el-icon-user-solid" :size="30"></el-avatar>
                     <el-dropdown class="user-info" trigger="click">
                       <span class="el-dropdown-link">
-                        Lands_LJK<i class="el-icon-arrow-down el-icon-caret-bottom" style="color: #aaa;font-size: 12px;margin-left: 5px;"></i>
+                        {{ user.name }}<i class="el-icon-arrow-down el-icon-caret-bottom" style="color: #aaa;font-size: 12px;margin-left: 5px;"></i>
                       </span>
                       <el-dropdown-menu slot="dropdown">
                         <el-dropdown-item class="header-drop-item">积分：<span class="points">15</span></el-dropdown-item>
                         <el-dropdown-item class="header-drop-item">金币：<span class="coins">200</span></el-dropdown-item>
                       </el-dropdown-menu>
                     </el-dropdown>
+                    <font-awesome-icon :icon="['fas', 'sign-out-alt']" style="color: #888;font-size: 12px;" />
                 </span>
-            </el-col>
-            <el-col :span="1">
-                <font-awesome-icon :icon="['fas', 'sign-out-alt']" style="color: #888;font-size: 12px;" />
+                <span v-else>
+                    <router-link to="/login" class="login">登录</router-link>
+                    <router-link to="/register" class="register">注册</router-link>
+                </span>
             </el-col>
         </el-row>
         </div>
@@ -40,7 +42,13 @@
 
 <script>
     export default {
-        name: "HeaderBox"
+        name: "HeaderBox",
+        data() {
+            return {
+                user: this.$store.state.user,
+                isLogin: this.$store.state.isLogin
+            }
+        }
     }
 </script>
 
@@ -86,5 +94,18 @@
         border: 1px solid #eaeaea;
         height: 120px;
         background: #fff;
+    }
+    .user {
+        text-align: center;
+    }
+    .login {
+        font-size: 14px;
+        color: #909399;
+        padding: 0 10px;
+    }
+    .register {
+        font-size: 14px;
+        color: #909399;
+        padding: 0 10px;
     }
 </style>

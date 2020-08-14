@@ -71,6 +71,9 @@
                                     message: '登录成功',
                                     type: 'success'
                                 });
+                                sessionStorage.setItem("user", JSON.stringify(result.data));
+                                v.$store.commit("setUser", result.data);
+                                v.$store.commit("setLoginStatus", true);
                             } else {
                                 v.$message.error(result.info);
                                 v.getCaptcha();

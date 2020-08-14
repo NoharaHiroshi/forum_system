@@ -12,6 +12,7 @@ import { fab } from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import util from './util/util'
 import api from './router/api'
+import store from './store'
 
 
 Vue.config.productionTip = false;
@@ -27,6 +28,7 @@ Vue.prototype.$api = api;
 new Vue({
   el: '#app',
   router,
+  store,
   components: { App },
   template: '<App/>'
 });

@@ -16,6 +16,7 @@ def configure_login_manager(app):
     login_manager = LoginManager()
     login_manager.login_view = 'user.login'
     login_manager.init_app(app)
+    app.config['SECRET_KEY'] = 'landsljklandsljk'
 
     @login_manager.user_loader
     def user_loader(user_id):
