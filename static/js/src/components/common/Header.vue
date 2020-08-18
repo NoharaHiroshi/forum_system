@@ -7,14 +7,14 @@
                     Forum System
                 </div>
             </el-col>
-            <el-col :span="17" >
+            <el-col :span="16" >
                 <el-menu  class="menu" mode="horizontal">
                     <el-menu-item index="1">首页</el-menu-item>
                     <el-menu-item index="2">资源中心</el-menu-item>
                     <el-menu-item index="3">积分充值</el-menu-item>
                 </el-menu>
             </el-col>
-            <el-col :span="3" class="user">
+            <el-col :span="4" class="user">
                 <span v-if="isLogin">
                     <el-avatar class="avatar" icon="el-icon-user-solid" :size="30"></el-avatar>
                     <el-dropdown class="user-info" trigger="click">
@@ -26,7 +26,7 @@
                         <el-dropdown-item class="header-drop-item">金币：<span class="coins">200</span></el-dropdown-item>
                       </el-dropdown-menu>
                     </el-dropdown>
-                    <font-awesome-icon :icon="['fas', 'sign-out-alt']" style="color: #888;font-size: 12px;" />
+                    <font-awesome-icon :icon="['fas', 'sign-out-alt']" title="logout" style="color: #888;font-size: 12px;cursor: pointer;" />
                 </span>
                 <span v-else>
                     <router-link to="/login" class="login">登录</router-link>
@@ -45,10 +45,17 @@
         name: "HeaderBox",
         data() {
             return {
-                user: this.$store.state.user,
-                isLogin: this.$store.state.isLogin
+
             }
-        }
+        },
+        computed: {
+            user: function () {
+                return this.$store.state.user;
+            },
+            isLogin: function () {
+                return this.$store.state.isLogin;
+            }
+          }
     }
 </script>
 
@@ -77,6 +84,7 @@
     .user-info {
         font-size: 14px;
         cursor: pointer;
+        margin-right: 10px;
     }
     .header-drop-item {
         font-size: 12px !important;
