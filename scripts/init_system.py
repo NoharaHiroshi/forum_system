@@ -7,6 +7,9 @@ from model.user.role import *
 from model.user.user_role_rel import *
 from model.forum.forum import *
 from model.forum.sub_forum import *
+from model.forum.forum_category import *
+from model.forum.forum_sub_category import *
+from model.forum.post_category_rel import *
 from libs.aes_chiper import *
 
 
@@ -40,6 +43,7 @@ def init_system_config(name, email, password):
         db_session.commit()
 
 
+# 3、创建论坛模块
 def create_forum(forum_name, sub_forum_list):
     with get_session() as db_session:
         forum = db_session.query(Forum).filter(
@@ -61,7 +65,36 @@ def create_forum(forum_name, sub_forum_list):
         db_session.commit()
 
 
+# 4、创建论坛分类
+def create_forum_category(sub_forum_name, category_name, sub_category_list):
+    with get_session() as db_session:
+        sub_forum = db_session.query(SubForum).filter(
+            SubForum.name == sub_forum_name
+        ).first()
+        if sub_forum:
+            sub_forum_id = sub_forum.id
+            forum_category = db_session.query(ForumCategory).filter(
+                ForumCategory.name == category_name
+            ).first()
+            if not forum_category:
+                category_id = IdGenerator.gen()
+                forum_category = ForumCategory()
+                forum_category.id = category_id
+                forum_category.name = category_name
+                forum_category.sub_forum_id = sub_forum_id
+                db_session.add(forum_category)
+            else:
+                category_id = forum_category.id
+            for sub_category_name in sub_category_list:
+                sub_category = ForumSubCategory()
+                sub_category.category_id = category_id
+                sub_category.name = sub_category_name
+                db_session.add(sub_category)
+        db_session.commit()
+
+
 if __name__ == "__main__":
     create_tables()
     # init_system_config("Lands", "380788433@qq.com", "12345678")
-    create_forum("漫画资源", ["日韩漫画", "国内漫画", "香港漫画", "欧美漫画"])
+    # create_forum("资源中心", ["漫画资源"])
+    create_forum_category("漫画资源", "类型", ["冒险", "热血", "搞笑", "恋爱", "少女", "日常", "校园", "运动", "治愈", "玄幻", "奇幻", "恐怖", "悬疑", "推理"])
