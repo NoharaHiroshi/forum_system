@@ -5,6 +5,8 @@ from model.config.session import *
 from model.user.user import *
 from model.user.role import *
 from model.user.user_role_rel import *
+from model.forum.forum import *
+from model.forum.sub_forum import *
 from libs.aes_chiper import *
 
 
@@ -38,7 +40,28 @@ def init_system_config(name, email, password):
         db_session.commit()
 
 
+def create_forum(forum_name, sub_forum_list):
+    with get_session() as db_session:
+        forum = db_session.query(Forum).filter(
+            Forum.name == forum_name
+        ).first()
+        if not forum:
+            forum_id = IdGenerator.gen()
+            forum = Forum()
+            forum.id = forum_id
+            forum.name = forum_name
+            db_session.add(forum)
+        else:
+            forum_id = forum.id
+        for sub_forum_name in sub_forum_list:
+            sub_forum = SubForum()
+            sub_forum.forum_id = forum_id
+            sub_forum.name = sub_forum_name
+            db_session.add(sub_forum)
+        db_session.commit()
+
+
 if __name__ == "__main__":
-    # create_tables()
-    # init_system_config("Lands", "380788433@qq.com", "LanziDuola_LJK")
-    print(AESCipher.encrypt("12345678"))
+    create_tables()
+    # init_system_config("Lands", "380788433@qq.com", "12345678")
+    create_forum("漫画资源", ["日韩漫画", "国内漫画", "香港漫画", "欧美漫画"])

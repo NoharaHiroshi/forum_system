@@ -26,5 +26,11 @@ export default{
       router: root + '/user/getCaptcha',
       checklogin: false
     }
+  },
+  website: {
+    index: {
+      router: root + '/index',
+      checklogin: false
+    }
   }
 }

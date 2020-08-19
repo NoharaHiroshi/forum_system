@@ -30,14 +30,14 @@
             <div class="website-info-title">帖子: <span style="color: #333;">18269</span></div><span class="pipe">|</span>
             <div class="website-info-title">会员: <span style="color: #333;">46948</span></div>
         </div>
-        <div class="board margin-bottom20 card">
+        <div class="board margin-bottom20 card" v-for="forum in forum_list" :key="forum.id">
             <div class="title">
-                漫画资源
+                {{forum.name}}
             </div>
             <div class="board-context">
-                <div class="category-item"  v-for="item in 5" :key="item">
+                <div class="category-item"  v-for="sub_forum in forum.sub_forums" :key="sub_forum.id">
                     <div class="category-item-img"></div>
-                    <div class="category-item-title"><span style="margin-right: 3px;">日本漫画</span><span class="new-add">(16)</span></div>
+                    <div class="category-item-title"><span style="margin-right: 3px;">{{sub_forum.name}}</span><span class="new-add">(16)</span></div>
                 </div>
             </div>
         </div>
@@ -49,13 +49,27 @@ export default {
   	name: 'Index',
     data() {
       return {
-        activeName: 'first'
-      };
+          activeName: 'first',
+          forum_list: null
+      }
+    },
+    created() {
+  	  this.index();
     },
     methods: {
-      handleClick(tab, event) {
-        console.log(tab, event);
-      }
+        handleClick(tab, event) {
+            console.log(tab, event);
+        },
+        index() {
+            let v = this;
+            v.$util.getAjax(v, v.$api.website.index, {}, function (result) {
+                if (result.response === "success") {
+                    v.forum_list = result.forum_list;
+                } else {
+                    v.$message.error(result.info);
+                }
+            });
+        }
     }
 }
 </script>
