@@ -31,6 +31,10 @@ export default{
     index: {
       router: root + '/index',
       checklogin: false
+    },
+    forum: {
+      router: root + '/forum',
+      checklogin: false
     }
   }
 }

@@ -35,10 +35,10 @@
                 {{forum.name}}
             </div>
             <div class="board-context">
-                <div class="category-item"  v-for="sub_forum in forum.sub_forums" :key="sub_forum.id">
+                <router-link class="category-item"  v-for="sub_forum in forum.sub_forums" :key="sub_forum.id" :to="{name:'forum', params: {sub_forum_id: sub_forum.id}}">
                     <div class="category-item-img"></div>
                     <div class="category-item-title"><span style="margin-right: 3px;">{{sub_forum.name}}</span><span class="new-add">(16)</span></div>
-                </div>
+                </router-link>
             </div>
         </div>
     </div>

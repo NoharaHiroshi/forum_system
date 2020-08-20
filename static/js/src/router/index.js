@@ -5,6 +5,7 @@ import Layout from '@/components/common/Layout'
 import Index from '@/components/Index'
 import Register from '@/components/common/Register'
 import Login from '@/components/common/Login'
+import Forum from "@/components/content/Forum"
 import store from '@/store'
 
 Vue.use(Router);
@@ -37,6 +38,13 @@ const router = new Router({
               path: "login",
               name: "login",
               component: Login,
+              meta: {
+                needLogin: false
+              }
+            }, {
+              path: "forum/:sub_forum_id",
+              name: "forum",
+              component: Forum,
               meta: {
                 needLogin: false
               }

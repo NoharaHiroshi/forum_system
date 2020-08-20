@@ -86,10 +86,14 @@ def create_forum_category(sub_forum_name, category_name, sub_category_list):
             else:
                 category_id = forum_category.id
             for sub_category_name in sub_category_list:
-                sub_category = ForumSubCategory()
-                sub_category.category_id = category_id
-                sub_category.name = sub_category_name
-                db_session.add(sub_category)
+                sub_category = db_session.query(ForumSubCategory).filter(
+                    ForumSubCategory.name == sub_category_name
+                ).first()
+                if not sub_category:
+                    sub_category = ForumSubCategory()
+                    sub_category.category_id = category_id
+                    sub_category.name = sub_category_name
+                    db_session.add(sub_category)
         db_session.commit()
 
 
