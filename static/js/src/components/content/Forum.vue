@@ -10,8 +10,50 @@
                 <span class="category-item-name" @click="selectCategory()" v-for="sub_category in category.sub_categories" :key="sub_category.id">{{sub_category.name}}</span>
             </div>
         </div>
+        <div class="search-context">
+            <el-input v-model="search" placeholder="请输入搜索内容" class="margin-bottom20 search-post"></el-input>
+            <el-button type="primary" style="height: 38px;border: none;">搜索</el-button>
+        </div>
         <div class="margin-bottom20 card post-context">
-
+            <div class="post-context-header">
+                <el-button style="height: 38px;float: left;">发帖</el-button>
+                <el-pagination background layout="prev, pager, next"  style="margin-top: 5px" :total="100">
+                </el-pagination>
+            </div>
+            <div class="post-context">
+                <div class="post-item" >
+                    <div class="post-item-img"></div>
+                    <router-link class="post-item-title" to="/">附罪者 全一册 清原紘 中文漫画资源下</router-link>
+                    <div class="post-item-info">
+                        <router-link to="/" class="post-item-creator">小新</router-link>
+                        <span class="post-item-read">阅读：370</span>
+                    </div>
+                </div>
+                <div class="post-item">
+                    <div class="post-item-img"></div>
+                    <router-link class="post-item-title" to="/">附罪者 全一册 清原紘 中文漫画资源下载</router-link>
+                    <div class="post-item-info">
+                        <router-link to="/" class="post-item-creator">小新</router-link>
+                        <span class="post-item-read">阅读：370</span>
+                    </div>
+                </div>
+                <div class="post-item">
+                    <div class="post-item-img"></div>
+                    <router-link class="post-item-title" to="/">【高清版】蜡笔小新 + 新蜡笔小新 50册单行本下载</router-link>
+                    <div class="post-item-info">
+                        <router-link to="/" class="post-item-creator">小新</router-link>
+                        <span class="post-item-read">阅读：370</span>
+                    </div>
+                </div>
+                <div class="post-item">
+                    <div class="post-item-img"></div>
+                    <router-link class="post-item-title" to="/">附罪者 全一册 清原紘 中文漫画资源下</router-link>
+                    <div class="post-item-info">
+                        <router-link to="/" class="post-item-creator">小新</router-link>
+                        <span class="post-item-read">阅读：370</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -21,7 +63,8 @@
         name: "Forum",
         data() {
             return {
-                category_list: null
+                category_list: null,
+                search: null
             }
         },
         created() {
@@ -64,6 +107,70 @@
     }
     .post-context {
         background: #fff;
-        padding: 10px 20px;
+        padding: 10px;
+    }
+    .search-context {
+        text-align: right;
+     }
+    .search-post {
+        width: 20%;
+        height: 40px;
+        margin-right: 5px;
+    }
+    .post-context-header {
+        text-align: right;
+        overflow: hidden;
+        padding: 10px;
+    }
+    .post-item {
+        width: 23%;
+        display: inline-block;
+        box-sizing: border-box;
+        margin: 0 1.75% 10px 0;
+        padding: 0;
+        border: 8px solid #fff;
+        box-shadow: 2px 3px 5px #cacaca;
+        -webkit-box-shadow: 2px 3px 5px #cacaca;
+        -moz-box-shadow: 2px 3px 5px #cacaca;
+        transition: all 0.3s linear;
+        overflow: hidden;
+    }
+    .post-item:hover {
+        box-shadow: 3px 4px 6px #bababa;
+        -webkit-box-shadow: 3px 4px 6px #bababa;
+        -moz-box-shadow: 3px 4px 6px #bababa;
+    }
+    .post-item .post-item-img {
+        display: inline-block;
+        box-sizing: border-box;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 100%;
+        height: 250px;
+        background: #efefef;
+    }
+    .post-item-title {
+        text-align: center;
+        height: 30px;
+        line-height: 30px;
+        font-size: 12px;
+        color: #888;
+        display: inline-block;
+        width: 100%;
+        white-space:nowrap;
+        overflow:hidden;
+        text-overflow:ellipsis;
+    }
+    .post-item-info {
+        height: 20px;
+        line-height: 20px;
+    }
+    .post-item-creator {
+        color: #bbb;
+    }
+    .post-item-read {
+        float: right;
+        color: #bbb;
     }
 </style>
