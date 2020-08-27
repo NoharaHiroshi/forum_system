@@ -16,12 +16,12 @@
         </div>
         <div class="margin-bottom20 card post-context">
             <div class="post-context-header">
-                <el-button style="height: 38px;float: left;">发帖</el-button>
+                <el-button style="height: 38px;float: left;" type="primary" @click="addPost()">发帖</el-button>
                 <el-pagination background layout="prev, pager, next"  style="margin-top: 5px" :total="100">
                 </el-pagination>
             </div>
             <div class="post-context">
-                <div class="post-item" >
+                <div class="post-item" v-for="i in 20" :key="i">
                     <div class="post-item-img"></div>
                     <router-link class="post-item-title" to="/">附罪者 全一册 清原紘 中文漫画资源下</router-link>
                     <div class="post-item-info">
@@ -29,30 +29,11 @@
                         <span class="post-item-read">阅读：370</span>
                     </div>
                 </div>
-                <div class="post-item">
-                    <div class="post-item-img"></div>
-                    <router-link class="post-item-title" to="/">附罪者 全一册 清原紘 中文漫画资源下载</router-link>
-                    <div class="post-item-info">
-                        <router-link to="/" class="post-item-creator">小新</router-link>
-                        <span class="post-item-read">阅读：370</span>
-                    </div>
-                </div>
-                <div class="post-item">
-                    <div class="post-item-img"></div>
-                    <router-link class="post-item-title" to="/">【高清版】蜡笔小新 + 新蜡笔小新 50册单行本下载</router-link>
-                    <div class="post-item-info">
-                        <router-link to="/" class="post-item-creator">小新</router-link>
-                        <span class="post-item-read">阅读：370</span>
-                    </div>
-                </div>
-                <div class="post-item">
-                    <div class="post-item-img"></div>
-                    <router-link class="post-item-title" to="/">附罪者 全一册 清原紘 中文漫画资源下</router-link>
-                    <div class="post-item-info">
-                        <router-link to="/" class="post-item-creator">小新</router-link>
-                        <span class="post-item-read">阅读：370</span>
-                    </div>
-                </div>
+            </div>
+            <div class="post-context-header">
+                <el-button style="height: 38px;float: left;" type="primary" @click="addPost()">发帖</el-button>
+                <el-pagination background layout="prev, pager, next"  style="margin-top: 5px" :total="100">
+                </el-pagination>
             </div>
         </div>
     </div>
@@ -84,6 +65,14 @@
             selectCategory() {
 
             },
+            addPost() {
+                this.$router.push({
+                    name: 'add_post',
+                    params: {
+                        sub_forum_id: this.$route.params["sub_forum_id"]
+                    }
+                });
+            }
         }
     }
 </script>
@@ -147,7 +136,7 @@
         overflow: hidden;
         text-overflow: ellipsis;
         width: 100%;
-        height: 250px;
+        height: 280px;
         background: #efefef;
     }
     .post-item-title {
