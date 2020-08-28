@@ -7,13 +7,13 @@ from model.base import Base, IdGenerator
 class Post(Base):
     __tablename__ = 'post'
 
-    CHECKING, PASS, NOT_PASS, DELETED, HIDDEN = range(5)
+    DRAFT, CHECKING, PASS, NOT_PASS, DELETED, HIDDEN = range(5)
 
     id = Column(BigInteger, default=IdGenerator.gen, primary_key=True)
     sub_forum_id = Column(BigInteger, index=True, nullable=False)
     user_id = Column(BigInteger, index=True, nullable=False)
     title = Column(String(100), index=True, nullable=False)
-    status = Column(Integer, index=True, default=CHECKING)
+    status = Column(Integer, index=True, default=DRAFT)
     cost = Column(Integer, index=True, nullable=False)
 
     def to_dict(self):

@@ -22,12 +22,31 @@
                     <div style="font-size: 16px;margin-bottom: 15px;">发表帖子</div>
                 </div>
                 <quill-editor
-                    v-model="editor"
+                    v-model="content"
                     ref="editor"
                     :options="editorOption"
+                    style="margin-bottom: 20px;"
                     @blur="onEditorBlur($event)" @focus="onEditorFocus($event)"
                     @change="onEditorChange($event)">
                 </quill-editor>
+                <el-row style="margin-bottom: 20px;">
+                    <el-col :span="12">
+                        <div style="display: inline-block; height: 40px; line-height: 40px; margin-right: 5px; width: 10%">隐藏内容：</div>
+                        <el-input v-model="hiddenContent" style="width: 85%;" placeholder="请输入需要用户购买后展示的内容"></el-input>
+                    </el-col>
+                    <el-col :span="8">
+                        <div style="display: inline-block; height: 40px; line-height: 40px; color:#acacac;">例如：百度网盘地址 https://pan.baidu.com/s/xxxx 密码：4a3f</div>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="12">
+                        <div style="display: inline-block; height: 40px; line-height: 40px; margin-right: 5px; width: 10%">售价：</div>
+                        <el-input v-model="cost" style="width: 85%;" placeholder="请输入需要用户付费的金币数量"></el-input>
+                    </el-col>
+                    <el-col :span="8">
+                        <div style="display: inline-block; height: 40px; line-height: 40px; color:#acacac;">推荐：30~70</div>
+                    </el-col>
+                </el-row>
                 <el-button type="primary" size="small" style="margin-top: 20px">发表</el-button>
             </div>
         </div>
@@ -39,34 +58,36 @@
         name: "AddPost",
         data() {
             return {
-                editor: null,
+                content: null,
+                hiddenContent: null,
+                cost: null,
                 editorOption: {
                     theme: 'snow',
                     placeholder: '请输入内容',
-                },
-                modules: {
-                    toolbar: [
-                        ['bold', 'italic', 'underline', 'strike'],
-                        ['blockquote', 'code-block'],
-                        ['image','video'],
-                        [{ 'header': 1 }, { 'header': 2 }],
-                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                        [{ 'script': 'sub'}, { 'script': 'super' }],
-                        [{ 'indent': '-1'}, { 'indent': '+1' }],
-                        [{ 'direction': 'rtl' }],
-                        [{ 'size': ['small', false, 'large', 'huge'] }],
-                        [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-                        [{ 'color': [] }, { 'background': [] }],
-                        [{ 'font': [] }],
-                        [{ 'align': [] }],
-                        ['clean']
-                    ],
-                    history: {
-                        delay: 2000,
-                        maxStack: 500,
-                        userOnly: true
+                    modules: {
+                        toolbar: [
+                            ['bold', 'italic', 'underline', 'strike'],
+                            ['blockquote', 'code-block'],
+                            ['image'],
+                            [{ 'header': 1 }, { 'header': 2 }],
+                            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                            [{ 'script': 'sub'}, { 'script': 'super' }],
+                            [{ 'indent': '-1'}, { 'indent': '+1' }],
+                            [{ 'direction': 'rtl' }],
+                            [{ 'size': ['small', false, 'large', 'huge'] }],
+                            [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+                            [{ 'color': [] }, { 'background': [] }],
+                            [{ 'font': [] }],
+                            [{ 'align': [] }],
+                            ['clean']
+                        ],
+                        history: {
+                            delay: 2000,
+                            maxStack: 500,
+                            userOnly: true
+                        }
                     }
-                }
+                },
             }
         },
         computed: {
@@ -75,8 +96,6 @@
             }
         },
         methods: {
-            // 准备编辑器
-            onEditorReady (editor) {},
             // 失去焦点事件
             onEditorBlur () {},
             // 获得焦点事件
@@ -108,5 +127,8 @@
     .post-context {
         background: #fff;
         padding: 15px 20px;
+    }
+    .ql-container {
+        height: 300px;
     }
 </style>
