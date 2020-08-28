@@ -1,6 +1,6 @@
 export default{
 	checkLogin(v){
-		let user = v.$cookies.get('user');
+		let user = v.$store.state.user;
 		return typeof(user) !== 'undefined';
 	},
 	postAjax(v, url, postdata, callback){

@@ -35,6 +35,10 @@ export default{
     forum: {
       router: root + '/forum',
       checklogin: false
+    },
+    submitPost: {
+      router: root + '/submit_post',
+      checklogin: true,
     }
   }
 }

@@ -21,33 +21,58 @@
                 <div class="post-rule-header">
                     <div style="font-size: 16px;margin-bottom: 15px;">发表帖子</div>
                 </div>
-                <quill-editor
-                    v-model="content"
-                    ref="editor"
-                    :options="editorOption"
-                    style="margin-bottom: 20px;"
-                    @blur="onEditorBlur($event)" @focus="onEditorFocus($event)"
-                    @change="onEditorChange($event)">
-                </quill-editor>
                 <el-row style="margin-bottom: 20px;">
-                    <el-col :span="12">
-                        <div style="display: inline-block; height: 40px; line-height: 40px; margin-right: 5px; width: 10%">隐藏内容：</div>
-                        <el-input v-model="hiddenContent" style="width: 85%;" placeholder="请输入需要用户购买后展示的内容"></el-input>
+                    <el-col :span="2">
+                        <div class="post-item-title">标题：</div>
+                    </el-col>
+                    <el-col :span="10">
+                        <el-input v-model="title" placeholder="请输入帖子主题"></el-input>
                     </el-col>
                     <el-col :span="8">
-                        <div style="display: inline-block; height: 40px; line-height: 40px; color:#acacac;">例如：百度网盘地址 https://pan.baidu.com/s/xxxx 密码：4a3f</div>
+                        <div class="post-item-help">例如：蜡笔小新[臼井仪人] 全50册 高清</div>
+                    </el-col>
+                </el-row>
+                <el-row style="margin-bottom: 20px;">
+                    <el-col :span="2">
+                        <div class="post-item-title">正文：</div>
+                    </el-col>
+                    <el-col :span="20">
+                        <quill-editor
+                            v-model="content"
+                            ref="editor"
+                            :options="editorOption"
+                            @blur="onEditorBlur($event)" @focus="onEditorFocus($event)"
+                            @change="onEditorChange($event)">
+                        </quill-editor>
+                    </el-col>
+                </el-row>
+                <el-row style="margin-bottom: 20px;">
+                    <el-col :span="2">
+                        <div class="post-item-title">隐藏内容：</div>
+                    </el-col>
+                    <el-col :span="10">
+                        <el-input v-model="hiddenContent"  placeholder="请输入需要用户购买后展示的内容"></el-input>
+                    </el-col>
+                    <el-col :span="8">
+                        <div class="post-item-help">例如：百度网盘地址 https://pan.baidu.com/s/xxxx 密码：4a3f</div>
                     </el-col>
                 </el-row>
                 <el-row>
-                    <el-col :span="12">
-                        <div style="display: inline-block; height: 40px; line-height: 40px; margin-right: 5px; width: 10%">售价：</div>
-                        <el-input v-model="cost" style="width: 85%;" placeholder="请输入需要用户付费的金币数量"></el-input>
+                    <el-col :span="2">
+                        <div class="post-item-title">售价：</div>
+                    </el-col>
+                    <el-col :span="10">
+                        <el-input v-model="cost" placeholder="请输入需要用户付费的金币数量"></el-input>
                     </el-col>
                     <el-col :span="8">
-                        <div style="display: inline-block; height: 40px; line-height: 40px; color:#acacac;">推荐：30~70</div>
+                        <div class="post-item-help">推荐：30金币到100金币之间</div>
                     </el-col>
                 </el-row>
-                <el-button type="primary" size="small" style="margin-top: 20px">发表</el-button>
+                <el-row>
+                    <el-col :span="4" :offset="2">
+                        <el-button type="primary" size="small" style="margin-top: 20px" @click="submit()">发表</el-button>
+                    </el-col>
+                </el-row>
             </div>
         </div>
     </div>
@@ -58,9 +83,11 @@
         name: "AddPost",
         data() {
             return {
+                post_id: null,
                 content: null,
                 hiddenContent: null,
                 cost: null,
+                title: null,
                 editorOption: {
                     theme: 'snow',
                     placeholder: '请输入内容',
@@ -97,15 +124,86 @@
         },
         methods: {
             // 失去焦点事件
-            onEditorBlur () {},
+            onEditorBlur () {
+                this.save();
+            },
             // 获得焦点事件
-            onEditorFocus () {},
+            onEditorFocus (e) {
+                console.log(e);
+            },
             // 内容改变事件
-            onEditorChange () {},
-            saveHtml (event) {
-                alert(this.content)
+            onEditorChange () {
+
+            },
+            save() {
+                let v = this;
+                if(v.title != null && v.content != null) {
+                    let data = {
+                        post_id: v.post_id,
+                        sub_forum_id: v.$route.params["sub_forum_id"],
+                        title: v.title,
+                        content: v.content,
+                        hidden_content: v.hiddenContent,
+                        cost: v.cost,
+                        status: 0,
+                    };
+                    console.log(data);
+                    v.$util.postAjax(v, v.$api.website.submitPost, data, function (result) {
+                        if (result.response === "success") {
+                            v.$message.success("帖子内容保存成功");
+                        } else {
+                            v.$message.error("帖子内容保存失败");
+                        }
+                    });
+                }
+            },
+            submit() {
+                let v = this;
+                console.log(this.content);
+                if(v.title == null) {
+                    v.$message.error("请输入标题");
+                    return;
+                }
+                if(v.content == null) {
+                    v.$message.error("正文内容不能为空");
+                    return;
+                }
+                if(v.hiddenContent == null) {
+                    v.$message.error("请输入隐藏内容");
+                    return;
+                }
+                if(v.cost == null) {
+                    v.$message.error("请输入售卖价格");
+                    return;
+                }
+                let data = {
+                    post_id: v.post_id,
+                    sub_forum_id: v.$route.params["sub_forum_id"],
+                    user_id: v.$store.state.user.id,
+                    title: v.title,
+                    content: v.content,
+                    hidden_content: v.hiddenContent,
+                    cost: v.cost,
+                    status: 1,
+                };
+                v.$util.postAjax(v, v.$api.website.submitPost, data, function (result) {
+                    if (result.response === "success") {
+                        v.$notify({
+                            title: '发布帖子成功',
+                            message: '发布成功',
+                            type: 'success'
+                        });
+                        v.$router.push({name: forum, params: {sub_forum_id: v.$route.params["sub_forum_id"]}})
+                    } else {
+                        v.$notify({
+                            title: '发布帖子失败',
+                            message: result.info,
+                            type: 'error'
+                        });
+                    }
+                });
             }
-        }
+        },
     }
 </script>
 
@@ -130,5 +228,18 @@
     }
     .ql-container {
         height: 300px;
+    }
+    .post-item-title{
+        display: inline-block;
+        height: 40px;
+        line-height: 40px;
+        text-align: right;
+    }
+    .post-item-help {
+        display: inline-block;
+        height: 40px;
+        line-height: 40px;
+        color:#acacac;
+        margin-left: 10px;
     }
 </style>

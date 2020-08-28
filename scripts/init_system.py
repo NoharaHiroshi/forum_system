@@ -10,6 +10,7 @@ from model.forum.sub_forum import *
 from model.forum.forum_category import *
 from model.forum.forum_sub_category import *
 from model.forum.post_category_rel import *
+from model.forum.post import *
 from libs.aes_chiper import *
 
 
@@ -101,4 +102,4 @@ if __name__ == "__main__":
     create_tables()
     # init_system_config("Lands", "380788433@qq.com", "12345678")
     # create_forum("资源中心", ["漫画资源"])
-    create_forum_category("漫画资源", "类型", ["冒险", "热血", "搞笑", "恋爱", "少女", "日常", "校园", "运动", "治愈", "玄幻", "奇幻", "恐怖", "悬疑", "推理"])
+    # create_forum_category("漫画资源", "类型", ["冒险", "热血", "搞笑", "恋爱", "少女", "日常", "校园", "运动", "治愈", "玄幻", "奇幻", "恐怖", "悬疑", "推理"])

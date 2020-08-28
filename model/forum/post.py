@@ -7,14 +7,16 @@ from model.base import Base, IdGenerator
 class Post(Base):
     __tablename__ = 'post'
 
-    DRAFT, CHECKING, PASS, NOT_PASS, DELETED, HIDDEN = range(5)
+    DRAFT, CHECKING, PASS, NOT_PASS, DELETED, HIDDEN = range(6)
 
     id = Column(BigInteger, default=IdGenerator.gen, primary_key=True)
     sub_forum_id = Column(BigInteger, index=True, nullable=False)
     user_id = Column(BigInteger, index=True, nullable=False)
     title = Column(String(100), index=True, nullable=False)
     status = Column(Integer, index=True, default=DRAFT)
-    cost = Column(Integer, index=True, nullable=False)
+    cost = Column(Integer, index=True, default=0)
+    hidden_content = Column(String(100))
+    content = Column(Text)
 
     def to_dict(self):
         return {
@@ -27,3 +29,6 @@ class Post(Base):
             "created_date": self.created_date.strftime('%Y-%m-%d %H:%M'),
             "modified_date": self.modified_date.strftime('%Y-%m-%d %H:%M')
         }
+
+    def get_content(self):
+        return self.content
