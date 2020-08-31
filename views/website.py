@@ -80,6 +80,33 @@ def forum_info():
         abort(500)
 
 
+@website.route('/edit_post', methods=['GET'])
+def edit_post():
+    try:
+        result = {
+            "response": "success",
+            "info": ""
+        }
+        sub_forum_id = request.args.get("sub_forum_id", None)
+        with get_session() as db_session:
+            post = db_session.query(Post).filter(
+                Post.user_id == current_user.id,
+                Post.sub_forum_id == sub_forum_id,
+                Post.status == Post.DRAFT
+            ).first()
+            if post:
+                post_data = post.to_dict()
+                post_data["hidden_content"] = post.get_hidden_content()
+                post_data["content"] = post.get_content()
+                result.update({
+                    "data": post_data
+                })
+        return jsonify(result)
+    except Exception as e:
+        print(traceback.format_exc(e))
+        abort(500)
+
+
 @website.route('/submit_post', methods=['POST'])
 def submit_post():
     try:

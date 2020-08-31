@@ -39,6 +39,10 @@ export default{
     submitPost: {
       router: root + '/submit_post',
       checklogin: true,
+    },
+    getPost: {
+      router: root + '/edit_post',
+      checklogin: true,
     }
   }
 }

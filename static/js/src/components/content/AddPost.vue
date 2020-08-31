@@ -71,6 +71,7 @@
                 <el-row>
                     <el-col :span="4" :offset="2">
                         <el-button type="primary" size="small" style="margin-top: 20px" @click="submit()">发表</el-button>
+                        <el-button type="warning" size="small" style="margin-top: 20px" @click="save()">保存为草稿</el-button>
                     </el-col>
                 </el-row>
             </div>
@@ -122,6 +123,9 @@
                 return this.$refs.editor.quill
             }
         },
+        created() {
+            this.get_post();
+        },
         methods: {
             // 失去焦点事件
             onEditorBlur () {
@@ -135,9 +139,26 @@
             onEditorChange () {
 
             },
+            get_post() {
+                let v = this;
+                let params = {
+                    sub_forum_id: v.$route.params["sub_forum_id"],
+                };
+                v.$util.getAjax(v, v.$api.website.getPost, params, function (result) {
+                    if (result.response === "success") {
+                        v.post_id = result.data.id;
+                        v.content = result.data.content;
+                        v.hiddenContent = result.data.hiddenContent;
+                        v.cost = result.data.cost;
+                        v.title = result.data.title;
+                    } else {
+                        v.$message.error("获取帖子内容失败");
+                    }
+                });
+            },
             save() {
                 let v = this;
-                if(v.title != null && v.content != null) {
+                if(v.content != null) {
                     let data = {
                         post_id: v.post_id,
                         sub_forum_id: v.$route.params["sub_forum_id"],
@@ -147,7 +168,6 @@
                         cost: v.cost,
                         status: 0,
                     };
-                    console.log(data);
                     v.$util.postAjax(v, v.$api.website.submitPost, data, function (result) {
                         if (result.response === "success") {
                             v.$message.success("帖子内容保存成功");
@@ -159,7 +179,6 @@
             },
             submit() {
                 let v = this;
-                console.log(this.content);
                 if(v.title == null) {
                     v.$message.error("请输入标题");
                     return;
