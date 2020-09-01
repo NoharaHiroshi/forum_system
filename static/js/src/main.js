@@ -13,6 +13,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import util from './util/util'
 import api from './router/api'
 import store from './store'
+import config from "./config"
 import VueQuillEditor from 'vue-quill-editor'
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
@@ -30,6 +31,7 @@ Vue.use(VueAxios, axios);
 
 Vue.prototype.$util = util;
 Vue.prototype.$api = api;
+Vue.prototype.$config = config;
 
 new Vue({
   el: '#app',

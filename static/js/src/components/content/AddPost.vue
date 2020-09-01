@@ -34,7 +34,27 @@
                 </el-row>
                 <el-row style="margin-bottom: 20px;">
                     <el-col :span="2">
-                        <div class="post-item-title">正文：</div>
+                        <div class="add-post-item-title">封面：</div>
+                    </el-col>
+                    <el-col :span="4">
+                        <el-upload
+                            class="avatar-uploader"
+                            :action="upload_imag_url"
+                            :show-file-list="false"
+                            name="img"
+                            :on-success="handleCoverSuccess"
+                            :before-upload="beforeCoverUpload">
+                            <img v-if="cover_image_url" :src="cover_image_url" class="avatar">
+                            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                        </el-upload>
+                    </el-col>
+                    <el-col :span="8">
+                        <div class="post-item-help" style="line-height: 178px;">提示：用于在首页中显示</div>
+                    </el-col>
+                </el-row>
+                <el-row style="margin-bottom: 20px;">
+                    <el-col :span="2">
+                        <div class="add-post-item-title">正文：</div>
                     </el-col>
                     <el-col :span="20">
                         <quill-editor
@@ -49,7 +69,7 @@
                 </el-row>
                 <el-row style="margin-bottom: 20px;">
                     <el-col :span="2">
-                        <div class="post-item-title">隐藏内容：</div>
+                        <div class="add-post-item-title">隐藏内容：</div>
                     </el-col>
                     <el-col :span="10">
                         <el-input v-model="hiddenContent"  placeholder="请输入需要用户购买后展示的内容"></el-input>
@@ -60,7 +80,7 @@
                 </el-row>
                 <el-row>
                     <el-col :span="2">
-                        <div class="post-item-title">售价：</div>
+                        <div class="add-post-item-title">售价：</div>
                     </el-col>
                     <el-col :span="10">
                         <el-input v-model="cost" placeholder="请输入需要用户付费的金币数量"></el-input>
@@ -86,7 +106,7 @@
         data() {
             const uploadConfig = {
                 action:  this.$api.lib.uploadImage,  // 必填参数 图片上传地址
-                resource_url: "http://localhost:5000/static/image/",
+                resource_url: this.$config.image_url,
                 methods: 'POST',  // 必填参数 图片上传方式
                 token: '',  // 可选参数 如果需要token验证，假设你的token有存放在sessionStorage
                 name: 'img',  // 必填参数 文件的参数名
@@ -173,8 +193,12 @@
                 hiddenContent: null,
                 cost: null,
                 title: null,
-                content_length: null,
+                content_length: 0,
                 max_content_length: 200,
+                cover_image_url: null,
+                cover_image_id: null,
+                upload_imag_url: this.$api.lib.uploadImage,
+                upload_config: uploadConfig,
                 editorOption: {
                     theme: 'snow',
                     placeholder: '请输入内容',
@@ -230,7 +254,9 @@
                         if(result.data){
                             v.post_id = result.data.id;
                             v.content = result.data.content;
-                            v.hiddenContent = result.data.hiddenContent;
+                            v.hiddenContent = result.data.hidden_content;
+                            v.cover_image_id = result.data.cover_image_id;
+                            v.cover_image_url = v.upload_config.resource_url + result.data.cover_image_url;
                             v.cost = result.data.cost;
                             v.title = result.data.title;
                         }
@@ -247,6 +273,7 @@
                         sub_forum_id: v.$route.params["sub_forum_id"],
                         title: v.title,
                         content: v.content,
+                        cover_image_id: v.cover_image_id,
                         hidden_content: v.hiddenContent,
                         cost: v.cost,
                         status: 0,
@@ -270,6 +297,10 @@
                     v.$message.error("正文内容不能为空");
                     return;
                 }
+                if(v.cover_image_id == null) {
+                    v.$message.error("封面图片不能为空");
+                    return;
+                }
                 if(v.hiddenContent == null) {
                     v.$message.error("请输入隐藏内容");
                     return;
@@ -283,6 +314,7 @@
                     sub_forum_id: v.$route.params["sub_forum_id"],
                     user_id: v.$store.state.user.id,
                     title: v.title,
+                    cover_image_id: v.cover_image_id,
                     content: v.content,
                     hidden_content: v.hiddenContent,
                     cost: v.cost,
@@ -304,6 +336,26 @@
                         });
                     }
                 });
+            },
+            handleCoverSuccess(res, file) {
+                this.cover_image_url = URL.createObjectURL(file.raw);
+                if(res.response === "success"){
+                    this.cover_image_id = res.data.id;
+                }else {
+                    this.$message.error('封面图片上传失败');
+                }
+            },
+            beforeCoverUpload(file) {
+                const isImg = (file.type === 'image/jpeg' || file.type === 'image/png');
+                const isLt2M = file.size / 1024 / 1024 < 2;
+
+                if (!isImg) {
+                  this.$message.error('请上传jpeg|png格式图片');
+                }
+                if (!isLt2M) {
+                  this.$message.error('上传封面图片大小不能超过2MB');
+                }
+                return isImg && isLt2M;
             }
         },
     }
@@ -332,10 +384,16 @@
         height: 300px;
     }
     .add-post-item-title{
-        display: inline-block;
+        text-align: right;
         height: 40px;
         line-height: 40px;
-        text-align: right;
+        font-size: 12px;
+        color: #888;
+        display: inline-block;
+        width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
     .post-item-help {
         display: inline-block;
@@ -343,5 +401,27 @@
         line-height: 40px;
         color:#acacac;
         margin-left: 10px;
+    }
+    .avatar-uploader .el-upload {
+        border: 1px dashed #d9d9d9;
+        border-radius: 6px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+      .avatar-uploader .el-upload:hover {
+        border-color: #409EFF;
+    }
+      .avatar-uploader-icon {
+        font-size: 28px;
+        color: #8c939d;
+        width: 178px;
+        height: 178px;
+        line-height: 178px;
+        text-align: center;
+    }
+      .avatar {
+        height: 178px;
+        display: block;
     }
 </style>

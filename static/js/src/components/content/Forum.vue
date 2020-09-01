@@ -22,10 +22,12 @@
             </div>
             <div class="post-context">
                 <div class="post-item" v-for="post in post_list" :key="post.id">
-                    <div class="post-item-img"></div>
-                    <router-link class="post-item-title" to="/">{{post.title}}</router-link>
+                    <router-link :to="{name: 'post', params: {sub_forum_id: sub_forum_id, post_id: post.id}}" class="post-item-img">
+                        <img :src="post.cover_image_url" style="width: 100%;">
+                    </router-link>
+                    <router-link class="post-item-title" :to="{name: 'post', params: {sub_forum_id: sub_forum_id, post_id: post.id}}">{{post.title}}</router-link>
                     <div class="post-item-info">
-                        <router-link to="/" class="post-item-creator">{{post.user}}</router-link>
+                        <router-link :to="{name: 'post', params: {sub_forum_id: sub_forum_id, post_id: post.id}}" class="post-item-creator">{{post.user}}</router-link>
                         <span class="post-item-read">阅读：{{post.read}}</span>
                     </div>
                 </div>
@@ -46,11 +48,13 @@
             return {
                 category_list: null,
                 post_list: null,
-                search: null
+                search: null,
+                sub_forum_id: null,
             }
         },
         created() {
           this.init();
+          this.sub_forum_id = this.$route.params["sub_forum_id"];
         },
         methods: {
             init() {
@@ -59,6 +63,9 @@
                     if (result.response === "success") {
                         v.category_list = result.category_list;
                         v.post_list = result.post_list;
+                        for(let post of v.post_list){
+                            post.cover_image_url = v.$config.image_url + post.cover_image_url;
+                        }
                     } else {
                         v.$message.error(result.info);
                     }

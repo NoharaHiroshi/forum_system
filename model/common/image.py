@@ -20,6 +20,7 @@ class Image(Base):
     status = Column(Integer, index=True, default=NORMAL)
     width = Column(Integer, index=True, nullable=False)
     height = Column(Integer, index=True, nullable=False)
+    path = Column(String(100), nullable=False)
 
     def to_dict(self):
         return {
@@ -27,8 +28,12 @@ class Image(Base):
             "name": self.name,
             "status": self.status,
             "width": self.width,
-            "height": self.height
+            "height": self.height,
+            "image_url": self.get_image_url()
         }
+
+    def get_image_url(self):
+        return os.path.join(self.path, self.name).replace('\\', '/')
 
     @classmethod
     def upload_image(cls, img_obj):
@@ -50,6 +55,7 @@ class Image(Base):
             img.name = file_name
             img.width = width
             img.height = height
+            img.path = path_src
             img.status = cls.NORMAL
             db_session.add(img)
             img_dict = img.to_dict()

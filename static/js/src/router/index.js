@@ -7,6 +7,7 @@ import Register from '@/components/common/Register'
 import Login from '@/components/common/Login'
 import Forum from "@/components/content/Forum"
 import AddPost from "@/components/content/AddPost"
+import PostDetail from "@/components/content/PostDetail"
 import store from '@/store'
 
 Vue.use(Router);
@@ -55,6 +56,13 @@ const router = new Router({
               component: AddPost,
               meta: {
                 needLogin: true
+              }
+            },{
+              path: "forum/:sub_forum_id/post/:post_id",
+              name: "post",
+              component: PostDetail,
+              meta: {
+                needLogin: false
               }
             }
           ]
