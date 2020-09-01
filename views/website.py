@@ -5,6 +5,7 @@ from flask_login import current_user
 from flask import Blueprint, jsonify, abort, request
 from model.config.session import get_session
 from model.forum.forum import Forum
+from model.user.user import User
 from model.forum.sub_forum import SubForum
 from model.forum.forum_category import ForumCategory
 from model.forum.forum_sub_category import ForumSubCategory
@@ -47,6 +48,7 @@ def forum_info():
         result = {
             'response': 'success',
             "category_list": list(),
+            "post_list": list(),
             "info": ""
         }
         sub_forum_id = request.args.get("sub_forum_id", None)
@@ -69,6 +71,17 @@ def forum_info():
                             for forum_sub_category in forum_sub_categories:
                                 forum_category_dict["sub_categories"].append(forum_sub_category.to_dict())
                         result["category_list"].append(forum_category_dict)
+                all_post = db_session.query(Post, User).join(
+                    User, User.id == Post.user_id
+                ).filter(
+                    Post.status == Post.PASS,
+                    Post.sub_forum_id == sub_forum_id
+                ).order_by(-Post.created_date).all()
+                if len(all_post) > 0:
+                    for post, user in all_post:
+                        post_dict = post.to_dict()
+                        post_dict["user"] = user.name
+                        result["post_list"].append(post_dict)
             else:
                 result.update({
                     'response': 'fail',

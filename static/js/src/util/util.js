@@ -26,7 +26,7 @@ export default{
 		    console.log(error); 
             v.$notify.error({
                 title: '请求失败',
-                message: '请联系管理员'
+                message: '请检查网络'
             });
 		});
 	},
@@ -42,8 +42,8 @@ export default{
 		}).catch(function (error) {
 		    console.log(error); 
             v.$notify.error({
-                title: '登录失败',
-                message: '网络错误，请检查网络连接'
+                title: '请求失败',
+                message: '请检查网络'
             });
 		});
 

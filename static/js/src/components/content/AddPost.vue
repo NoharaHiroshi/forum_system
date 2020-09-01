@@ -23,10 +23,10 @@
                 </div>
                 <el-row style="margin-bottom: 20px;">
                     <el-col :span="2">
-                        <div class="post-item-title">标题：</div>
+                        <div class="add-post-item-title">标题：</div>
                     </el-col>
                     <el-col :span="10">
-                        <el-input v-model="title" placeholder="请输入帖子主题"></el-input>
+                        <el-input v-model="title" placeholder="请输入帖子主题" maxlength="40" show-word-limit></el-input>
                     </el-col>
                     <el-col :span="8">
                         <div class="post-item-help">例如：蜡笔小新[臼井仪人] 全50册 高清</div>
@@ -44,6 +44,7 @@
                             @blur="onEditorBlur($event)" @focus="onEditorFocus($event)"
                             @change="onEditorChange($event)">
                         </quill-editor>
+                        <div style="float: right; margin-top: 5px; color: #aaa;" id="content_len">{{content_length}} / {{max_content_length}}</div>
                     </el-col>
                 </el-row>
                 <el-row style="margin-bottom: 20px;">
@@ -83,32 +84,105 @@
     export default {
         name: "AddPost",
         data() {
+            const uploadConfig = {
+                action:  this.$api.lib.uploadImage,  // 必填参数 图片上传地址
+                resource_url: "http://localhost:5000/static/image/",
+                methods: 'POST',  // 必填参数 图片上传方式
+                token: '',  // 可选参数 如果需要token验证，假设你的token有存放在sessionStorage
+                name: 'img',  // 必填参数 文件的参数名
+                size: 500,  // 可选参数   图片大小，单位为Kb, 1M = 1024Kb
+                accept: 'image/png, image/gif, image/jpeg, image/bmp, image/x-icon'  // 可选 可上传的图片格式
+            };
+            const toolOptions = [
+                ['bold', 'italic', 'underline', 'strike'],
+                ['blockquote', 'code-block'],
+                [{'header': 1}, {'header': 2}],
+                [{'list': 'ordered'}, {'list': 'bullet'}],
+                [{'script': 'sub'}, {'script': 'super'}],
+                [{'indent': '-1'}, {'indent': '+1'}],
+                [{'direction': 'rtl'}],
+                [{'size': ['small', false, 'large', 'huge']}],
+                [{'header': [1, 2, 3, 4, 5, 6, false]}],
+                [{'color': []}, {'background': []}],
+                [{'font': []}],
+                [{'align': []}],
+                ['clean'],
+                ['image']
+            ];
+            const handlers = {
+                image: function image() {
+                    let self = this;
+
+                    let fileInput = this.container.querySelector('input.ql-image[type=file]');
+                    if (fileInput === null) {
+                        fileInput = document.createElement('input');
+                        fileInput.setAttribute('type', 'file');
+                        // 设置图片参数名
+                        if (uploadConfig.name) {
+                            fileInput.setAttribute('name', uploadConfig.name);
+                        }
+                        // 可设置上传图片的格式
+                        fileInput.setAttribute('accept', uploadConfig.accept);
+                        fileInput.classList.add('ql-image');
+                        // 监听选择文件
+                        fileInput.addEventListener('change', function () {
+                            // 创建formData
+                            let formData = new FormData();
+                            formData.append(uploadConfig.name, fileInput.files[0]);
+                            formData.append('object','product');
+                            // 如果需要token且存在token
+                            if (uploadConfig.token) {
+                                formData.append('token', uploadConfig.token)
+                            }
+                            // 图片上传
+                            let xhr = new XMLHttpRequest();
+                            xhr.open(uploadConfig.methods, uploadConfig.action, true);
+                            // 上传数据成功，会触发
+                            xhr.onload = function (e) {
+                                if (xhr.status === 200) {
+                                    let res = JSON.parse(xhr.responseText);
+                                    console.log(res);
+                                    let length = self.quill.getSelection(true).index;
+                                    //这里很重要，你图片上传成功后，img的src需要在这里添加，res.path就是你服务器返回的图片链接。
+                                    self.quill.insertEmbed(length, 'image', uploadConfig.resource_url + res.data.src);
+                                    self.quill.setSelection(length + 1)
+                                }
+                                fileInput.value = ''
+                            };
+                            // 开始上传数据
+                            xhr.upload.onloadstart = function (e) {
+                                fileInput.value = ''
+                            };
+                            // 当发生网络异常的时候会触发，如果上传数据的过程还未结束
+                            xhr.upload.onerror = function (e) {
+                            };
+                            // 上传数据完成（成功或者失败）时会触发
+                            xhr.upload.onloadend = function (e) {
+                                // console.log('上传结束')
+                            };
+                            xhr.send(formData)
+                        });
+                        this.container.appendChild(fileInput);
+                    }
+                    fileInput.click();
+                }
+            };
             return {
                 post_id: null,
                 content: null,
                 hiddenContent: null,
                 cost: null,
                 title: null,
+                content_length: null,
+                max_content_length: 200,
                 editorOption: {
                     theme: 'snow',
                     placeholder: '请输入内容',
                     modules: {
-                        toolbar: [
-                            ['bold', 'italic', 'underline', 'strike'],
-                            ['blockquote', 'code-block'],
-                            ['image'],
-                            [{ 'header': 1 }, { 'header': 2 }],
-                            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                            [{ 'script': 'sub'}, { 'script': 'super' }],
-                            [{ 'indent': '-1'}, { 'indent': '+1' }],
-                            [{ 'direction': 'rtl' }],
-                            [{ 'size': ['small', false, 'large', 'huge'] }],
-                            [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-                            [{ 'color': [] }, { 'background': [] }],
-                            [{ 'font': [] }],
-                            [{ 'align': [] }],
-                            ['clean']
-                        ],
+                        toolbar: {
+                            container: toolOptions,
+                            handlers: handlers
+                        },
                         history: {
                             delay: 2000,
                             maxStack: 500,
@@ -136,8 +210,15 @@
                 console.log(e);
             },
             // 内容改变事件
-            onEditorChange () {
-
+            onEditorChange (e) {
+                // 判断是否达到最大编辑字数
+                this.content_length = e.text.length;
+                if(this.content_length >= this.max_content_length) {
+                    $("#content_len").css("color", "#F56C6C");
+                    e.quill.deleteText(this.max_content_length, 4);
+                }else {
+                    $("#content_len").css("color", "#AAA");
+                }
             },
             get_post() {
                 let v = this;
@@ -146,11 +227,13 @@
                 };
                 v.$util.getAjax(v, v.$api.website.getPost, params, function (result) {
                     if (result.response === "success") {
-                        v.post_id = result.data.id;
-                        v.content = result.data.content;
-                        v.hiddenContent = result.data.hiddenContent;
-                        v.cost = result.data.cost;
-                        v.title = result.data.title;
+                        if(result.data){
+                            v.post_id = result.data.id;
+                            v.content = result.data.content;
+                            v.hiddenContent = result.data.hiddenContent;
+                            v.cost = result.data.cost;
+                            v.title = result.data.title;
+                        }
                     } else {
                         v.$message.error("获取帖子内容失败");
                     }
@@ -212,7 +295,7 @@
                             message: '发布成功',
                             type: 'success'
                         });
-                        v.$router.push({name: forum, params: {sub_forum_id: v.$route.params["sub_forum_id"]}})
+                        v.$router.push({name: "forum", params: {sub_forum_id: v.$route.params["sub_forum_id"]}})
                     } else {
                         v.$notify({
                             title: '发布帖子失败',
@@ -248,7 +331,7 @@
     .ql-container {
         height: 300px;
     }
-    .post-item-title{
+    .add-post-item-title{
         display: inline-block;
         height: 40px;
         line-height: 40px;

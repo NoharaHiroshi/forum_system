@@ -5,10 +5,12 @@ from model.user.user import User
 
 from views.website import website
 from views.user import user
+from views.lib import lib
 
 BLUEPRINTS = [
     (website, ''),
     (user, '/user'),
+    (lib, "/lib"),
 ]
 
 

@@ -11,6 +11,7 @@ from model.forum.forum_category import *
 from model.forum.forum_sub_category import *
 from model.forum.post_category_rel import *
 from model.forum.post import *
+from model.common.image import Image
 from libs.aes_chiper import *
 
 

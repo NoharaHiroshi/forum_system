@@ -21,12 +21,12 @@
                 </el-pagination>
             </div>
             <div class="post-context">
-                <div class="post-item" v-for="i in 20" :key="i">
+                <div class="post-item" v-for="post in post_list" :key="post.id">
                     <div class="post-item-img"></div>
-                    <router-link class="post-item-title" to="/">附罪者 全一册 清原紘 中文漫画资源下</router-link>
+                    <router-link class="post-item-title" to="/">{{post.title}}</router-link>
                     <div class="post-item-info">
-                        <router-link to="/" class="post-item-creator">小新</router-link>
-                        <span class="post-item-read">阅读：370</span>
+                        <router-link to="/" class="post-item-creator">{{post.user}}</router-link>
+                        <span class="post-item-read">阅读：{{post.read}}</span>
                     </div>
                 </div>
             </div>
@@ -45,6 +45,7 @@
         data() {
             return {
                 category_list: null,
+                post_list: null,
                 search: null
             }
         },
@@ -57,6 +58,7 @@
                 v.$util.getAjax(v, v.$api.website.forum, {sub_forum_id: this.$route.params["sub_forum_id"]}, function (result) {
                     if (result.response === "success") {
                         v.category_list = result.category_list;
+                        v.post_list = result.post_list;
                     } else {
                         v.$message.error(result.info);
                     }

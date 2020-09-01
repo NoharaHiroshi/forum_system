@@ -44,5 +44,9 @@ export default{
       router: root + '/edit_post',
       checklogin: true,
     }
+  },
+  lib: {
+    uploadImage: root + "/lib/upload_image",
+    checklogin: true
   }
 }

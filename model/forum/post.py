@@ -16,6 +16,7 @@ class Post(Base):
     status = Column(Integer, index=True, default=DRAFT)
     cost = Column(Integer, index=True, default=0)
     hidden_content = Column(String(100))
+    read = Column(BigInteger, index=True, default=0)
     content = Column(Text)
 
     def to_dict(self):
@@ -26,6 +27,7 @@ class Post(Base):
             "title": self.title,
             "status": self.status,
             "cost": self.cost,
+            "read": self.read,
             "created_date": self.created_date.strftime('%Y-%m-%d %H:%M'),
             "modified_date": self.modified_date.strftime('%Y-%m-%d %H:%M')
         }
