@@ -121,10 +121,10 @@
         padding: 10px;
     }
     .post-item {
-        width: 23%;
+        width: 19.5%;
         display: inline-block;
         box-sizing: border-box;
-        margin: 0 1.75% 10px 0;
+        margin: 0 0.5% 10px 0;
         padding: 0;
         border: 8px solid #fff;
         box-shadow: 2px 3px 5px #cacaca;

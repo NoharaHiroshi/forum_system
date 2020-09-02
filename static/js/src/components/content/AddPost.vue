@@ -29,7 +29,7 @@
                         <el-input v-model="title" placeholder="请输入帖子主题" maxlength="40" show-word-limit></el-input>
                     </el-col>
                     <el-col :span="8">
-                        <div class="post-item-help">例如：蜡笔小新[臼井仪人] 全50册 高清</div>
+                        <div class="post-item-help">提示：蜡笔小新[臼井仪人] 全50册 高清</div>
                     </el-col>
                 </el-row>
                 <el-row style="margin-bottom: 20px;">
@@ -38,13 +38,13 @@
                     </el-col>
                     <el-col :span="4">
                         <el-upload
-                            class="avatar-uploader"
+                            class="uploader"
                             :action="upload_imag_url"
                             :show-file-list="false"
                             name="img"
                             :on-success="handleCoverSuccess"
                             :before-upload="beforeCoverUpload">
-                            <img v-if="cover_image_url" :src="cover_image_url" class="avatar">
+                            <img v-if="cover_image_url" :src="cover_image_url" class="cover">
                             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                         </el-upload>
                     </el-col>
@@ -75,7 +75,7 @@
                         <el-input v-model="hiddenContent"  placeholder="请输入需要用户购买后展示的内容"></el-input>
                     </el-col>
                     <el-col :span="8">
-                        <div class="post-item-help">例如：百度网盘地址 https://pan.baidu.com/s/xxxx 密码：4a3f</div>
+                        <div class="post-item-help">提示：百度网盘地址 https://pan.baidu.com/s/xxxx 密码：4a3f</div>
                     </el-col>
                 </el-row>
                 <el-row>
@@ -86,7 +86,7 @@
                         <el-input v-model="cost" placeholder="请输入需要用户付费的金币数量"></el-input>
                     </el-col>
                     <el-col :span="8">
-                        <div class="post-item-help">推荐：30金币到100金币之间</div>
+                        <div class="post-item-help">提示：推荐30金币到100金币之间</div>
                     </el-col>
                 </el-row>
                 <el-row>
@@ -281,6 +281,7 @@
                     v.$util.postAjax(v, v.$api.website.submitPost, data, function (result) {
                         if (result.response === "success") {
                             v.$message.success("帖子内容保存成功");
+                            v.post_id = result.data.id;
                         } else {
                             v.$message.error("帖子内容保存失败");
                         }
@@ -322,18 +323,10 @@
                 };
                 v.$util.postAjax(v, v.$api.website.submitPost, data, function (result) {
                     if (result.response === "success") {
-                        v.$notify({
-                            title: '发布帖子成功',
-                            message: '发布成功',
-                            type: 'success'
-                        });
+                        v.$message.success("发布帖子成功");
                         v.$router.push({name: "forum", params: {sub_forum_id: v.$route.params["sub_forum_id"]}})
                     } else {
-                        v.$notify({
-                            title: '发布帖子失败',
-                            message: result.info,
-                            type: 'error'
-                        });
+                        v.$message.error("发布帖子失败，原因 ：" + result.info);
                     }
                 });
             },
@@ -402,14 +395,14 @@
         color:#acacac;
         margin-left: 10px;
     }
-    .avatar-uploader .el-upload {
+    .uploader .el-upload {
         border: 1px dashed #d9d9d9;
         border-radius: 6px;
         cursor: pointer;
         position: relative;
         overflow: hidden;
     }
-      .avatar-uploader .el-upload:hover {
+      .uploader .el-upload:hover {
         border-color: #409EFF;
     }
       .avatar-uploader-icon {
@@ -420,7 +413,7 @@
         line-height: 178px;
         text-align: center;
     }
-      .avatar {
+      .cover {
         height: 178px;
         display: block;
     }

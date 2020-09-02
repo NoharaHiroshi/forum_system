@@ -182,7 +182,10 @@ def submit_post():
                     post.cost = cost
                     db_session.add(post)
                 db_session.commit()
-
+                post_data = post.to_dict()
+                result.update({
+                    "data": post_data
+                })
             else:
                 result.update({
                     'response': 'fail',
