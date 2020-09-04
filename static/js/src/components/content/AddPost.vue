@@ -249,7 +249,7 @@
                 let params = {
                     sub_forum_id: v.$route.params["sub_forum_id"],
                 };
-                v.$util.getAjax(v, v.$api.website.getPost, params, function (result) {
+                v.$util.getAjax(v, v.$api.website.getEditPost, params, function (result) {
                     if (result.response === "success") {
                         if(result.data){
                             v.post_id = result.data.id;

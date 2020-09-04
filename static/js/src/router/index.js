@@ -58,7 +58,7 @@ const router = new Router({
                 needLogin: true
               }
             },{
-              path: "forum/:sub_forum_id/post/:post_id",
+              path: "post/:post_id",
               name: "post",
               component: PostDetail,
               meta: {

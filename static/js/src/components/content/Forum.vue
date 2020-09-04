@@ -22,12 +22,12 @@
             </div>
             <div class="post-context">
                 <div class="post-item" v-for="post in post_list" :key="post.id">
-                    <router-link :to="{name: 'post', params: {sub_forum_id: sub_forum_id, post_id: post.id}}" class="post-item-img">
+                    <router-link :to="{name: 'post', params: {post_id: post.id}}" class="post-item-img">
                         <img :src="post.cover_image_url" style="width: 100%;">
                     </router-link>
-                    <router-link class="post-item-title" :to="{name: 'post', params: {sub_forum_id: sub_forum_id, post_id: post.id}}">{{post.title}}</router-link>
+                    <router-link class="post-item-title" :to="{name: 'post', params: {post_id: post.id}}">{{post.title}}</router-link>
                     <div class="post-item-info">
-                        <router-link :to="{name: 'post', params: {sub_forum_id: sub_forum_id, post_id: post.id}}" class="post-item-creator">{{post.user}}</router-link>
+                        <router-link :to="{name: 'post', params: {post_id: post.id}}" class="post-item-creator">{{post.user}}</router-link>
                         <span class="post-item-read">阅读：{{post.read}}</span>
                     </div>
                 </div>

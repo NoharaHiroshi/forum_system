@@ -195,3 +195,43 @@ def submit_post():
     except Exception as e:
         print(traceback.format_exc(e))
         abort(500)
+
+
+@website.route('/post', methods=["GET"])
+def get_post():
+    try:
+        result = {
+            "response": "success",
+            "data": "",
+            "info": ""
+        }
+        post_id = request.args.get("post_id", None)
+        with get_session() as db_session:
+            post, image, sub_forum, user = db_session.query(
+                Post, Image, SubForum, User
+            ).join(
+                Image, Post.cover_image_id == Image.id
+            ).join(
+                User, Post.user_id == User.id
+            ).join(
+                SubForum, Post.sub_forum_id == SubForum.id
+            ).filter(
+                Post.id == post_id
+            ).first()
+            if post:
+                post_dict = post.to_dict()
+                post_dict["content"] = post.get_content()
+                result.update({
+                    "data": {
+                        "post": post_dict,
+                        "cover_image_url": image.get_image_url(),
+                        "sub_forum": sub_forum.to_dict(),
+                        "user": user.to_dict()
+                    }
+                })
+        return jsonify(result)
+    except Exception as e:
+        print(traceback.format_exc(e))
+        abort(500)
+
+
