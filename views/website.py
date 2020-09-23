@@ -7,6 +7,7 @@ from model.config.session import get_session
 from model.forum.forum import Forum
 from model.user.user import User
 from model.forum.sub_forum import SubForum
+from model.user.user_pay_record import UserPayRecord
 from model.forum.forum_category import ForumCategory
 from model.forum.forum_sub_category import ForumSubCategory
 from model.forum.post import Post
@@ -205,7 +206,7 @@ def get_post():
             "data": "",
             "info": ""
         }
-        post_id = request.args.get("post_id", None)
+        post_id = request.json.get("post_id", None)
         with get_session() as db_session:
             post, image, sub_forum, user = db_session.query(
                 Post, Image, SubForum, User
@@ -235,3 +236,43 @@ def get_post():
         abort(500)
 
 
+@website.route('/pay', methods=["POST"])
+def pay_post():
+    try:
+        result = {
+            "response": "success",
+            "data": "",
+            "info": ""
+        }
+        post_id = request.json.get("post_id", None)
+        with get_session() as db_session:
+            post = db_session.query(Post).get(post_id)
+            if post:
+                if post.user_id != current_user.id:
+                    if post.cost <= current_user.coin:
+                        user_pay_record = UserPayRecord()
+                        user_pay_record.user_id = current_user.id
+                        user_pay_record.post_id = post.id
+                        user_pay_record.cost = post.cost
+                        current_user.coin -= post.cost
+                        db_session.add(user_pay_record)
+                        db_session.commit()
+                    else:
+                        result.update({
+                            "response": "fail",
+                            "info": "您的金币不足"
+                        })
+                else:
+                    result.update({
+                        "response": "fail",
+                        "info": "当前帖子由您创建，无需购买"
+                    })
+            else:
+                result.update({
+                    "response": "fail",
+                    "info": "当前帖子不存在"
+                })
+        return jsonify(result)
+    except Exception as e:
+        print(traceback.format_exc(e))
+        abort(500)

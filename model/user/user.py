@@ -14,6 +14,7 @@ class User(Base):
     password = Column(String(225), nullable=False)
     email = Column(String(100), index=True, nullable=False)
     status = Column(Integer, default=NOT_ACTIVE, index=True)
+    coin = Column(BigInteger, default=0, index=True)
 
     def is_active(self):
         return self.status == User.NORMAL
@@ -27,6 +28,7 @@ class User(Base):
             'email': self.email,
             'name': self.name,
             'status': self.status,
+            'coin': self.coin,
             'is_active': self.is_active()
         }
 

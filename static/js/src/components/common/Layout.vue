@@ -27,6 +27,11 @@ export default {
         padding: 0;
         margin: 0;
         box-sizing: border-box;
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none; /* IE 10+ */
+    }
+    body::-webkit-scrollbar {
+        display: none; /* Chrome Safari */
     }
     ul, li {
         padding:0;

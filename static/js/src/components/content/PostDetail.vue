@@ -1,12 +1,12 @@
 <template>
     <div class="context" style="width: 95%;margin: 0 auto;">
-        <el-breadcrumb separator-class="el-icon-arrow-right" class="margin-bottom20" style="font-size: 12px;">
+        <el-breadcrumb separator-class="el-icon-arrow-right" class="margin-bottom20" style="font-size: 12px;" v-if="!is_loading">
             <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
             <el-breadcrumb-item :to="{ name: 'forum', params: {sub_forum_id: sub_forum.id} }">{{sub_forum.name}}</el-breadcrumb-item>
             <el-breadcrumb-item>{{post.title}}</el-breadcrumb-item>
         </el-breadcrumb>
-        <div class="margin-bottom20 card post-detail-context">
-            <div class="post-context">
+        <div class="margin-bottom20 card post-detail-context" v-loading="is_loading">
+            <div class="post-context-detail" v-if="!is_loading">
                 <div class="post-user-context">
                     <div class="post-user-info">
                         <div class="post-user-name">{{user.name}}</div>
@@ -30,8 +30,10 @@
                         <div class="post-detail-data" v-html="post.content"></div>
                         <div class="post-detail-cover">隐藏内容:</div>
                         <div class="post-hidden-content">
-                            <div class="hidden-message"><strong>{{current_user.name}}</strong>, 本付费内容需要支付 <strong>{{post.cost}}金币</strong> 才能浏览。
-                                <span @click="post" style="color: #FF6B00; text-decoration:underline;cursor: pointer;">支付</span>
+                            <div class="hidden-message">
+                                <span class="locked"><img src="http://localhost:5000/static/img/locked.gif"></span>
+                                <strong style="color: #FF6B00">{{current_user.name}}</strong>, 本付费内容需要支付 <strong style="color: #FF6B00">{{post.cost}}金币</strong> 才能浏览。
+                                <span @click="pay()" class="pay">支付</span>
                             </div>
                         </div>
                     </div>
@@ -46,6 +48,7 @@
         name: "PostDetail",
         data() {
             return {
+                is_loading: true,
                 post: null,
                 cover_image_url: null,
                 user: null,
@@ -73,12 +76,41 @@
                             v.cover_image_url = v.$config.image_url +  result.data.cover_image_url;
                             v.user = result.data.user;
                             v.sub_forum = result.data.sub_forum;
+                            v.is_loading = false;
                         }
                     } else {
                         v.$message.error("获取帖子内容失败");
                     }
                 });
             },
+            pay() {
+                let v = this;
+                this.$confirm('购买此资源将消耗<strong style="color: #FF6B00;">' + this.post.cost + '金币</strong>，是否确定购买?', '提示', {
+                    dangerouslyUseHTMLString: true,
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    let params = {
+                        post_id: v.$route.params["post_id"],
+                    };
+                    v.$util.postAjax(v, v.$api.website.pay, params, function (result) {
+                        if (result.response === "success") {
+                            if(result.data){
+                                v.$message({
+                                    type: 'success',
+                                    message: '购买成功!'
+                                });
+                            }
+                        } else {
+                            v.$message({
+                                type: 'error',
+                                message: '购买失败！' + result.info
+                            });
+                        }
+                    });
+                });
+            }
         }
     }
 </script>
@@ -87,6 +119,9 @@
     .post-detail-context {
         background: #fff;
         padding: 10px;
+    }
+    .post-context-detail {
+        padding: 5px;
     }
     .post-user-context {
         border: 1px solid #eaeaea;
@@ -178,11 +213,26 @@
         text-align: center;
     }
     .hidden-message {
-        margin: 10px 0;
+        margin: 10px 0 20px;
         padding: 0 24px;
         height: 50px;
         line-height: 50px;
         border: 2px solid #FF6B00;
         font-size: 14px;
+    }
+    .locked {
+        width: 16px;
+        height: 16px;
+        display: inline-block;
+    }
+    .pay {
+        color: #FF6B00;
+        text-decoration:underline;
+        cursor: pointer;
+        font-weight: 700;
+    }
+    .pay:hover {
+        color: #409EFF;
+        transition: 1s;
     }
 </style>

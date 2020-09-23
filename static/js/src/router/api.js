@@ -47,6 +47,10 @@ export default{
     getPost: {
       router: root + '/post',
       checklogin: false,
+    },
+    pay: {
+      router: root + '/pay',
+      checklogin: true,
     }
   },
   lib: {
