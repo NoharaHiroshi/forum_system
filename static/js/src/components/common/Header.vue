@@ -12,6 +12,7 @@
                     <el-menu-item index="1">首页</el-menu-item>
                     <el-menu-item index="2">资源中心</el-menu-item>
                     <el-menu-item index="3">积分充值</el-menu-item>
+                    <el-menu-item index="3">帮助中心</el-menu-item>
                 </el-menu>
             </el-col>
             <el-col :span="4" class="user">

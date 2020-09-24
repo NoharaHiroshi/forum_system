@@ -31,9 +31,14 @@
                         <div class="post-detail-cover">隐藏内容:</div>
                         <div class="post-hidden-content">
                             <div class="hidden-message">
-                                <span class="locked"><img src="http://localhost:5000/static/img/locked.gif"></span>
-                                <strong style="color: #FF6B00">{{current_user.name}}</strong>, 本付费内容需要支付 <strong style="color: #FF6B00">{{post.cost}}金币</strong> 才能浏览。
-                                <span @click="pay()" class="pay">支付</span>
+                                <div v-if="!hidden_content">
+                                    <span class="locked"><img src="http://localhost:5000/static/img/locked.gif"></span>
+                                    <strong style="color: #FF6B00">{{current_user.name}}</strong>, 本付费内容需要支付 <strong style="color: #FF6B00">{{post.cost}}金币</strong> 才能浏览。
+                                    <span @click="pay()" class="pay">支付</span>
+                                </div>
+                                <div v-else>
+                                    <div style="font-weight: 700;">{{hidden_content}}</div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -50,6 +55,7 @@
             return {
                 is_loading: true,
                 post: null,
+                hidden_content: null,
                 cover_image_url: null,
                 user: null,
                 sub_forum: null
@@ -76,6 +82,9 @@
                             v.cover_image_url = v.$config.image_url +  result.data.cover_image_url;
                             v.user = result.data.user;
                             v.sub_forum = result.data.sub_forum;
+                            if(result.data.hidden_content){
+                                v.hidden_content = result.data.hidden_content;
+                            }
                             v.is_loading = false;
                         }
                     } else {
@@ -96,12 +105,11 @@
                     };
                     v.$util.postAjax(v, v.$api.website.pay, params, function (result) {
                         if (result.response === "success") {
-                            if(result.data){
-                                v.$message({
+                            v.$message({
                                     type: 'success',
                                     message: '购买成功!'
                                 });
-                            }
+                            v.hidden_content = result.data;
                         } else {
                             v.$message({
                                 type: 'error',

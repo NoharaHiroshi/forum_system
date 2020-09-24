@@ -222,14 +222,29 @@ def get_post():
             if post:
                 post_dict = post.to_dict()
                 post_dict["content"] = post.get_content()
-                result.update({
-                    "data": {
-                        "post": post_dict,
-                        "cover_image_url": image.get_image_url(),
-                        "sub_forum": sub_forum.to_dict(),
-                        "user": user.to_dict()
-                    }
-                })
+                user_pay_record = db_session.query(UserPayRecord).filter(
+                    UserPayRecord.user_id == current_user.id,
+                    UserPayRecord.post_id == post_id
+                ).first()
+                if user_pay_record or post.user_id == current_user.id:
+                    result.update({
+                        "data": {
+                            "post": post_dict,
+                            "hidden_content": post.get_hidden_content(),
+                            "cover_image_url": image.get_image_url(),
+                            "sub_forum": sub_forum.to_dict(),
+                            "user": user.to_dict()
+                        }
+                    })
+                else:
+                    result.update({
+                        "data": {
+                            "post": post_dict,
+                            "cover_image_url": image.get_image_url(),
+                            "sub_forum": sub_forum.to_dict(),
+                            "user": user.to_dict()
+                        }
+                    })
         return jsonify(result)
     except Exception as e:
         print(traceback.format_exc(e))
@@ -249,19 +264,32 @@ def pay_post():
             post = db_session.query(Post).get(post_id)
             if post:
                 if post.user_id != current_user.id:
-                    if post.cost <= current_user.coin:
-                        user_pay_record = UserPayRecord()
-                        user_pay_record.user_id = current_user.id
-                        user_pay_record.post_id = post.id
-                        user_pay_record.cost = post.cost
-                        current_user.coin -= post.cost
-                        db_session.add(user_pay_record)
-                        db_session.commit()
-                    else:
+                    user_pay_record = db_session.query(UserPayRecord).filter(
+                        UserPayRecord.post_id == post_id,
+                        UserPayRecord.user_id == current_user.id
+                    ).first()
+                    if user_pay_record:
                         result.update({
                             "response": "fail",
-                            "info": "您的金币不足"
+                            "info": "当前资源已购买，请勿重复购买"
                         })
+                    else:
+                        if post.cost <= current_user.coin:
+                            user_pay_record = UserPayRecord()
+                            user_pay_record.user_id = current_user.id
+                            user_pay_record.post_id = post.id
+                            user_pay_record.cost = post.cost
+                            current_user.coin -= post.cost
+                            db_session.add(user_pay_record)
+                            db_session.commit()
+                            result.update({
+                                "data": post.get_hidden_content()
+                            })
+                        else:
+                            result.update({
+                                "response": "fail",
+                                "info": "您的金币不足"
+                            })
                 else:
                     result.update({
                         "response": "fail",

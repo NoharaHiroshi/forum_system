@@ -75,6 +75,7 @@
                                 localStorage.setItem("isLogin", "1");
                                 v.$store.commit("setUser", result.data);
                                 v.$store.commit("setLoginStatus", true);
+                                v.$router.push({name: 'index'});
                             } else {
                                 v.$message.error(result.info);
                                 v.getCaptcha();
