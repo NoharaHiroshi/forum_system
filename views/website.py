@@ -206,7 +206,7 @@ def get_post():
             "data": "",
             "info": ""
         }
-        post_id = request.json.get("post_id", None)
+        post_id = request.args.get("post_id", None)
         with get_session() as db_session:
             post, image, sub_forum, user = db_session.query(
                 Post, Image, SubForum, User
